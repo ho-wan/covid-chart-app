@@ -8,6 +8,8 @@ To start:
 
 `npm start`
 
+To debug, start locally on localhost:3000, then in vscode launch debugger using F5 using configured `launch.json`
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

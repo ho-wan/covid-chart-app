@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { fetchDataAction } from "./redux/chart.actions";
 import { COLORS } from "./utils/constants";
 
 const StyledChartCardDiv = styled.div`
@@ -18,6 +20,13 @@ const StyledChartCardDiv = styled.div`
 `;
 
 function ChartCard() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // fetch data from API on mount
+    dispatch(fetchDataAction());
+  });
+
   return (
     <>
       <StyledChartCardDiv>ChartCard</StyledChartCardDiv>

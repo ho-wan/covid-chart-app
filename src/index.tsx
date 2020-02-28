@@ -5,6 +5,7 @@ import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
 import App from "./App";
 import { chartReducer } from "./chart/redux/chart.reducer";
+import chartSagas from "./chart/redux/chart.sagas";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 
@@ -27,13 +28,13 @@ function configureStore(preloadedState) {
 const store = configureStore({});
 
 // TODO add sagas
-// sagaMiddleware.run(chartSagas);
+sagaMiddleware.run(chartSagas);
 
 ReactDOM.render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById("root")
+  document.getElementById("root") || document.createElement("div") // needed to make test work
 );
 
 serviceWorker.unregister();
