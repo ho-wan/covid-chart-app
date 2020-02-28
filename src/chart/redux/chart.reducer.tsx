@@ -1,13 +1,18 @@
-const initialState = {
-  data: null,
+import { ChartAction, ChartState } from "../chart.types";
+import { CHART_ACTIONS } from "./chart.actions";
+
+const initialState: ChartState = {
+  data: [],
 };
 
-// @ts-ignore
-export const chartReducer = (state = initialState, action) => {
+export const chartReducer = (state = initialState, action: ChartAction) => {
+  const { data } = action;
+
   switch (action.type) {
-    case "TODO":
+    case CHART_ACTIONS.ADD_DATA_TO_STORE:
       return {
         ...state,
+        data,
       };
     default:
       return {

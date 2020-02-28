@@ -2,6 +2,7 @@ export const CHART_ACTIONS = {
   FETCH_DATA: "FETCH_DATA",
   FETCH_DATA_SUCCESS: "FETCH_DATA_SUCCESS",
   FETCH_DATA_FAIL: "FETCH_DATA_FAIL",
+  ADD_DATA_TO_STORE: "ADD_DATA_TO_STORE",
 };
 
 export const fetchDataAction = () => ({
