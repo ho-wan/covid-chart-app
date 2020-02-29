@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { loadChart } from "./d3/d3chart";
 import { fetchDataAction } from "./redux/chart.actions";
+import { chartSelectors } from "./redux/chart.reducer";
 import { COLORS } from "./utils/constants";
 
 const StyledChartCardDiv = styled.div`
@@ -20,12 +22,19 @@ const StyledChartCardDiv = styled.div`
 `;
 
 function ChartCard() {
+  const data = useSelector(chartSelectors.dataSelector);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     // fetch data from API on mount
     dispatch(fetchDataAction());
-  });
+  }, [dispatch]);
+
+  useEffect(() => {
+    // fetch data from API on mount
+    loadChart(data);
+  }, [data]);
 
   return (
     <>

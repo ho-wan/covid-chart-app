@@ -1,4 +1,8 @@
 // redux
+export interface RootState {
+  chart: ChartState;
+}
+
 export interface ChartState {
   data: DateData[];
 }
