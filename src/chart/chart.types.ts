@@ -27,3 +27,13 @@ export interface RegionData {
   state: string;
   cases: number;
 }
+
+// D3
+export interface D3ChartProps {
+  chartProps: ChartProps;
+  data?: DateData[];
+}
+
+export interface ChartProps {
+  chartWidth: number;
+}

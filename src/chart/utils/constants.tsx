@@ -9,3 +9,12 @@ export const COVID_API_URL = {
   baseUrl: 'https://covid-api.spandraw.com',
   data: 'data',
 };
+
+export const CHART_PROPS = {
+  chartWidth: 900,
+}
+
+export const CHART_ID = {
+  svgDiv: 'svg-div',
+  svg: 'svg',
+}
