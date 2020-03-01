@@ -68,6 +68,7 @@ function ChartCard() {
       return (
         <div className="custom-tooltip">
           <p>{`date: ${e.label}`}</p>
+          <p>{"Top 5 countries by cases (excluding China)"}</p>
           <p>{`${sorted[0].dataKey}: ${sorted[0].value}`}</p>
           <p>{`${sorted[1].dataKey}: ${sorted[1].value}`}</p>
           <p>{`${sorted[2].dataKey}: ${sorted[2].value}`}</p>
