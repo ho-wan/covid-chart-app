@@ -26,7 +26,7 @@ const StyledChartCardDiv = styled.div`
 
 const flattenData = function(data: DateData[]) {
   const dataKeySet: Set<string> = new Set();
-  const dataFlattened = data.map((d, i) => {
+  const dataFlattened = data.map((d) => {
     // sum up cases by country and store in temp dict
     const dict: FlatCountryCase = {};
     d.regionData.forEach(rd => {
@@ -49,23 +49,6 @@ const flattenData = function(data: DateData[]) {
   return { dataFlattened, dataKeys };
 };
 
-// function CustomTooltip(e: any) {
-//   if (e == null || e.props == null) return null;
-//   const { active } = e.props;
-
-//   if (active) {
-//     const { payload, label } = e.props;
-//     return (
-//       <div className="custom-tooltip">
-//         <p className="label">{`${label} : ${payload && payload[0].value}`}</p>
-//         <p className="desc">Anything you want can be displayed here.</p>
-//       </div>
-//     );
-//   }
-
-//   return null;
-// }
-
 function ChartCard() {
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -80,27 +63,33 @@ function ChartCard() {
   const dataKeysFiltered = dataKeys.filter(v => v !== "China");
 
   function customTooltip(e: TooltipProps) {
-    if (e.active && e.payload != null && e.payload[0] != null) {
+    if (e.active && e.payload) {
+      const sorted = Array.from(e.payload).sort((a, b) => a.value > b.value ? -1 : 1)
       return (
         <div className="custom-tooltip">
-          <p>{e.payload[0].payload["dataKey"]}</p>
+          <p>{`date: ${e.label}`}</p>
+          <p>{`${sorted[0].dataKey}: ${sorted[0].value}`}</p>
+          <p>{`${sorted[1].dataKey}: ${sorted[1].value}`}</p>
+          <p>{`${sorted[2].dataKey}: ${sorted[2].value}`}</p>
+          <p>{`${sorted[3].dataKey}: ${sorted[3].value}`}</p>
+          <p>{`${sorted[4].dataKey}: ${sorted[4].value}`}</p>
         </div>
       );
-    } else {
-      return "";
     }
+    return null;
   }
 
   return (
     <>
+      <h1>Covid Chart</h1>
+      <span>by Spandraw</span>
       <StyledChartCardDiv>
-        ChartCard
-        {data.length && (
+        {data.length > 0 && (
           <ResponsiveContainer>
-            <LineChart data={dataFlattened} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+            <LineChart data={dataFlattened} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip content={customTooltip} />
+              <Tooltip content={customTooltip} isAnimationActive={false} />
               <CartesianGrid strokeDasharray="3 3" />
               {dataKeysFiltered.map((dKey, i) => (
                 <Line
