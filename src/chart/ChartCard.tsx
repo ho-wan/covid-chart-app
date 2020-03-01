@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import styled from "styled-components";
-import { createChart, loadChart } from "./d3/d3chart";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
-import { CHART_ID, CHART_PROPS, COLORS } from "./utils/constants";
+import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledChartCardDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
@@ -13,6 +13,8 @@ const StyledChartCardDiv = styled.div`
     margin-left: auto;
     margin-right: auto;
   }
+
+  height: 500px;
 
   background-color: ${COLORS.white};
   margin: 20px;
@@ -23,34 +25,38 @@ const StyledChartCardDiv = styled.div`
 
 function ChartCard() {
   const data = useSelector(chartSelectors.dataSelector);
-  // const onFirstLoad = data === [];
-
-  const chartProps = {
-    chartWidth: CHART_PROPS.chartWidth,
-  };
+  const dataFlattened = data.map(d => {
+    return {
+      date: d.date,
+      dataUS: d.regionData.filter(v => v.country === "US").map(v => v.cases),
+    };
+  });
 
   const dispatch = useDispatch();
 
   // call once on first load only - TODO add button to fetch API manually in case fail
   useEffect(() => {
-    // fetch data from API on mount
     dispatch(fetchDataAction());
-    createChart();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // call when data is returned from API
-  useEffect(() => {
-    loadChart({ chartProps, data });
-  }, [chartProps, data]);
 
   return (
     <>
       <StyledChartCardDiv>
         ChartCard
-        <div id={CHART_ID.svgDiv} />
-        {/* <svg width={CHART_PROPS.chartWidth} id={CHART_ID.svg} /> */}
-        {/* </div> */}
+        <ResponsiveContainer>
+          <LineChart
+            data={dataFlattened}
+            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+          >
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Line type="monotone" dataKey="dataUS" stroke="#ff7300" yAxisId={0} animationDuration={200} />
+            {/* <Line type="monotone" dataKey="dataUK" stroke="#387908" yAxisId={1} /> */}
+          </LineChart>
+        </ResponsiveContainer>
       </StyledChartCardDiv>
     </>
   );

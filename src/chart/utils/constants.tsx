@@ -15,6 +15,5 @@ export const CHART_PROPS = {
 }
 
 export const CHART_ID = {
-  svgDiv: 'svg-div',
-  svg: 'svg',
+  chart: 'chart',
 }
