@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
@@ -44,19 +44,17 @@ function ChartCard() {
     <>
       <StyledChartCardDiv>
         ChartCard
-        <ResponsiveContainer>
-          <LineChart
-            data={dataFlattened}
-            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
-          >
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Line type="monotone" dataKey="dataUS" stroke="#ff7300" yAxisId={0} animationDuration={200} />
-            {/* <Line type="monotone" dataKey="dataUK" stroke="#387908" yAxisId={1} /> */}
-          </LineChart>
-        </ResponsiveContainer>
+        {data.length && (
+          <ResponsiveContainer>
+            <LineChart data={dataFlattened} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Line type="monotone" dataKey="dataUS" stroke="#ff7300" yAxisId={0} animationDuration={500} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </StyledChartCardDiv>
     </>
   );
