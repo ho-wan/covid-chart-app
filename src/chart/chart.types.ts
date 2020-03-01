@@ -28,12 +28,13 @@ export interface RegionData {
   cases: number;
 }
 
-// D3
-export interface D3ChartProps {
-  chartProps: ChartProps;
-  data?: DateData[];
+// Data Treated
+export interface FlatCountryCase {
+  [key: string]: number;
 }
 
-export interface ChartProps {
-  chartWidth: number;
+export interface DateString {
+  date: string;
 }
+
+export type FlatData = FlatCountryCase & DateString;
