@@ -21,6 +21,10 @@ const StyledChartCardDiv = styled.div`
     margin-right: auto;
   }
 
+  @media (min-height: 500px) {
+    height: 500px;
+  }
+
   height: 300px;
 
   background-color: ${COLORS.white};
@@ -35,7 +39,7 @@ function ChartCard() {
   // TODO move to state
   const nDays = 13;
   const nCountries = 8;
-  const showDelta = true;
+  const showDelta = false;
 
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -55,7 +59,8 @@ function ChartCard() {
 
   const filteredData = nivoData.filter(v => mostDeltaCountries.includes(v.id));
 
-  const data = getLastNDaysData(filteredData, nDays);
+  // reverse to show legend in correcy order
+  const data = getLastNDaysData(filteredData, nDays).reverse();
 
   return (
     <>
