@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
-import { formatDataForNivo, getMostRecentDelta } from "./utils/chartHelpers";
+import { formatDataForNivo } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledChartTitle = styled.h3`
@@ -42,11 +42,12 @@ function ChartCard() {
 
   const nivoData = dateData.length > 0 ? formatDataForNivo(dateData) : [];
 
-  const lastDelta = getMostRecentDelta(dateData);
-  console.log(lastDelta.slice(0, 10));
-
   // only show first 10 countries to render faster - TODO show 10 largest only
-  const data = nivoData.slice(0, 10);
+  const nDays = 13;
+  const data = nivoData.slice(0, 10).map(v => ({
+    id: v.id,
+    data: v.data.slice(Math.max(v.data.length - nDays, 0)),
+  }));
 
   return (
     <>
@@ -56,12 +57,24 @@ function ChartCard() {
           <>
             <ResponsiveLine
               data={data}
-              margin={{ top: 20, right: 20, bottom: 20, left: 40 }}
-              xScale={{ type: "point" }}
+              margin={{ top: 20, right: 40, bottom: 20, left: 40 }}
               yScale={{ type: "linear", min: "auto", max: "auto" }}
-              axisTop={null}
-              axisRight={null}
+              xScale={{
+                type: "time",
+                precision: "day",
+              }}
+              axisBottom={{
+                tickValues: "every 2 days",
+                format: "%b %d",
+              }}
               colors={{ scheme: "nivo" }}
+              pointSize={5}
+              pointColor={{ theme: "background" }}
+              pointBorderWidth={2}
+              pointBorderColor={{ from: "serieColor" }}
+              // pointLabel="y"
+              // pointLabelYOffset={-12}
+              // useMesh={true}
             />
           </>
         )}

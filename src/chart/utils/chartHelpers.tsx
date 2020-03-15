@@ -1,16 +1,11 @@
-import { Serie } from "@nivo/line";
+import { Datum, Serie } from "@nivo/line";
 import { DateData, DeltaData } from "../chart.types";
 
 export const formatDataForNivo = function(data: DateData[]): Serie[] {
   if (data == undefined || data.length == 0) return [];
 
   interface TempDict {
-    [key: string]: DataPoint[];
-  }
-
-  interface DataPoint {
-    x: string;
-    y: number;
+    [key: string]: Datum[];
   }
 
   // get dict of all countries from first item in list
@@ -23,7 +18,7 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   data.forEach(dd => {
     dd.regionData.forEach(rd => {
       tDict[rd.co].push({
-        x: dd.date,
+        x: new Date(Date.parse(dd.date)),
         y: rd.n,
       });
     });
