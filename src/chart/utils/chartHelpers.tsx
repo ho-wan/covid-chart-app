@@ -1,7 +1,7 @@
 import { Datum, Serie } from "@nivo/line";
 import { DateData, DeltaData } from "../chart.types";
 
-export const formatDataForNivo = function(data: DateData[]): Serie[] {
+export const formatDataForNivo = function(data: DateData[], deltaData: boolean = false): Serie[] {
   if (data == undefined || data.length == 0) return [];
 
   interface TempDict {
@@ -15,11 +15,12 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   });
 
   // iterate through dates, add data to dict of countries
-  data.forEach(dd => {
-    dd.regionData.forEach(rd => {
+  data.forEach((dd, dateIdx) => {
+    dd.regionData.forEach((rd, regIdx) => {
+      const casesPrevDay = dateIdx > 1 ? data[dateIdx - 1].regionData[regIdx].n : 0;
       tDict[rd.co].push({
         x: new Date(Date.parse(dd.date)),
-        y: rd.n,
+        y: deltaData ? rd.n - casesPrevDay : rd.n,
       });
     });
   });

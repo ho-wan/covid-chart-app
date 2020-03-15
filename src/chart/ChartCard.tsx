@@ -32,8 +32,10 @@ const StyledChartCardDiv = styled.div`
 `;
 
 function ChartCard() {
+  // TODO move to state
   const nDays = 13;
-  const nCountries = 10;
+  const nCountries = 8;
+  const showDelta = true;
 
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -44,7 +46,7 @@ function ChartCard() {
 
   const dateData = useSelector(chartSelectors.dataSelector);
 
-  const nivoData = formatDataForNivo(dateData);
+  const nivoData = formatDataForNivo(dateData, showDelta);
 
   // array of the top nCountries with largest increase in cases
   const mostDeltaCountries: ReactText[] = getMostRecentDelta(dateData)
@@ -63,6 +65,7 @@ function ChartCard() {
           <>
             <ResponsiveLine
               data={data}
+              // curve="linear"
               margin={{ top: 20, right: 100, bottom: 20, left: 60 }}
               yScale={{ type: "linear", min: "auto", max: "auto", stacked: true }}
               xScale={{
@@ -74,7 +77,7 @@ function ChartCard() {
                 format: "%b %d",
               }}
               axisLeft={{
-                legend: "Delta (daily increase in cases)",
+                legend: showDelta ? "Delta (daily increase in cases)" : "cases",
                 legendOffset: -50,
                 legendPosition: "middle",
               }}
@@ -83,8 +86,8 @@ function ChartCard() {
               pointColor={{ theme: "background" }}
               pointBorderWidth={2}
               pointBorderColor={{ from: "serieColor" }}
-              // pointLabel="y"
-              // pointLabelYOffset={-12}
+              pointLabel="y"
+              pointLabelYOffset={-12}
               // useMesh={true}
               legends={[
                 {
