@@ -5,19 +5,6 @@ import { formatDataForNivo } from "../chartHelpers";
 test("formats data for Nivo charts", () => {
   const want: Serie[] = [
     {
-      id: "Japan",
-      data: [
-        {
-          x: "2020-03-06",
-          y: 420,
-        },
-        {
-          x: "2020-03-05",
-          y: 360,
-        },
-      ],
-    },
-    {
       id: "China",
       data: [
         {
@@ -27,6 +14,19 @@ test("formats data for Nivo charts", () => {
         {
           x: "2020-03-05",
           y: 800,
+        },
+      ],
+    },
+    {
+      id: "Japan",
+      data: [
+        {
+          x: "2020-03-06",
+          y: 420,
+        },
+        {
+          x: "2020-03-05",
+          y: 360,
         },
       ],
     },

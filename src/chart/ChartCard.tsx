@@ -42,13 +42,16 @@ function ChartCard() {
 
   const nivoData = formatDataForNivo(data);
 
+  // only show first 10 countries to render faster
+  const nivoDataSlice = nivoData.slice(0, 10)
+
   return (
     <>
       <StyledChartTitle>Covid Chart</StyledChartTitle>
       <StyledChartCardDiv>
-        {data.length > 0 && (
+        {nivoData.length > 0 && (
           <>
-            <ResponsiveLine data={nivoData} />
+            <ResponsiveLine data={nivoDataSlice} />
           </>
         )}
       </StyledChartCardDiv>

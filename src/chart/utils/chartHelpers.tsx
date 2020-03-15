@@ -1,62 +1,41 @@
 import { Serie } from "@nivo/line";
 import { DateData } from "../chart.types";
 
-const tempData: Serie[] = [
-  {
-    id: "Japan",
-    data: [
-      {
-        x: "2020-03-06",
-        y: 420,
-      },
-      {
-        x: "2020-03-05",
-        y: 360,
-      },
-    ],
-  },
-  {
-    id: "China",
-    data: [
-      {
-        x: "2020-03-06",
-        y: 900,
-      },
-      {
-        x: "2020-03-05",
-        y: 800,
-      },
-    ],
-  },
-];
+export const formatDataForNivo = function(data: DateData[]): Serie[] {
+  if (!data || data.length == 0) return [];
 
-export const formatDataForNivo = function(data: DateData[]) {
-  return tempData;
-};
+  interface TempDict {
+    [key: string]: DataPoint[];
+  }
 
-/*
-export const flattenDataForRecharts = function(data: DateData[]) {
-  const dataKeySet: Set<string> = new Set();
-  const dataFlattened = data.map(d => {
-    // sum up cases by country and store in temp dict
-    const dict: FlatCountryCase = {};
-    d.regionData.forEach(rd => {
-      if (dict[rd.country] == null) {
-        dict[rd.country] = rd.cases;
-      } else {
-        dict[rd.country] += rd.cases;
-      }
+  interface DataPoint {
+    x: string;
+    y: number;
+  }
 
-      dataKeySet.add(rd.country);
-    });
-
-    return {
-      ...dict,
-      date: d.date,
-    } as FlatData;
+  // get dict of all countries from first item in list
+  let tDict: TempDict = {};
+  data[0].regionData.forEach(regionData => {
+    tDict[regionData.co] = [];
   });
-  const dataKeys = Array.from(dataKeySet);
 
-  return { dataFlattened, dataKeys };
+  // iterate through dates, add data to dict of countries
+  data.forEach(dd => {
+    dd.regionData.forEach(rd => {
+      tDict[rd.co].push({
+        x: dd.date,
+        y: rd.n,
+      });
+    });
+  });
+
+  let nivoData = [];
+  for (const country in tDict) {
+    nivoData.push({
+      id: country,
+      data: tDict[country],
+    });
+  }
+
+  return nivoData;
 };
-*/
