@@ -47,3 +47,17 @@ export const getMostRecentDelta = function(data: DateData[]): DeltaData[] {
   casesDelta.sort((a, b) => b.delta - a.delta);
   return casesDelta;
 };
+
+// getLastNDaysData returns last n days of data
+export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[] {
+  if (serie == undefined || serie.length == 0) return [];
+
+  const resData = serie.map(v => {
+    const tData = v.data.slice(Math.max(v.data.length - nDays, 0));
+    return {
+      id: v.id,
+      data: tData,
+    };
+  });
+  return resData;
+};
