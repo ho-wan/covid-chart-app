@@ -1,9 +1,9 @@
-import { DateData, FlatCountryCase, FlatData } from "../chart.types";
+import { Serie } from "@nivo/line";
+import { DateData } from "../chart.types";
 
-const tempData = [
+const tempData: Serie[] = [
   {
     id: "Japan",
-    color: "hsl(266, 70%, 50%)",
     data: [
       {
         x: "2020-03-06",
@@ -13,15 +13,10 @@ const tempData = [
         x: "2020-03-05",
         y: 360,
       },
-      {
-        x: "2020-03-04",
-        y: 300,
-      },
     ],
   },
   {
     id: "China",
-    color: "hsl(130, 70%, 50%)",
     data: [
       {
         x: "2020-03-06",
@@ -31,18 +26,15 @@ const tempData = [
         x: "2020-03-05",
         y: 800,
       },
-      {
-        x: "2020-03-04",
-        y: 200,
-      },
     ],
   },
 ];
 
-export const formatDataForNivo = function(data: any) {
+export const formatDataForNivo = function(data: DateData[]) {
   return tempData;
 };
 
+/*
 export const flattenDataForRecharts = function(data: DateData[]) {
   const dataKeySet: Set<string> = new Set();
   const dataFlattened = data.map(d => {
@@ -67,3 +59,4 @@ export const flattenDataForRecharts = function(data: DateData[]) {
 
   return { dataFlattened, dataKeys };
 };
+*/

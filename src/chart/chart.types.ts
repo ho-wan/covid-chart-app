@@ -19,22 +19,11 @@ export interface AllDateData {
 
 export interface DateData {
   date: string;
+  reportNumber: number;
   regionData: RegionData[];
 }
 
 export interface RegionData {
-  country: string;
-  state: string;
-  cases: number;
+  co: string;
+  n: number;
 }
-
-// Data Treated
-export interface FlatCountryCase {
-  [key: string]: number;
-}
-
-export interface DateString {
-  date: string;
-}
-
-export type FlatData = FlatCountryCase & DateString;

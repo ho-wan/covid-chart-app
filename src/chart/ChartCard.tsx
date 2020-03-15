@@ -7,6 +7,11 @@ import { chartSelectors } from "./redux/chart.reducer";
 import { formatDataForNivo } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
+const StyledChartTitle = styled.h3`
+  padding: 5px;
+  margin: 0px;
+`;
+
 const StyledChartCardDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
   @media (min-width: ${CHART_PROPS.chartWidth + 100}px) {
@@ -15,12 +20,13 @@ const StyledChartCardDiv = styled.div`
     margin-right: auto;
   }
 
-  height: 500px;
+  height: 300px;
 
   background-color: ${COLORS.white};
   margin: 20px;
+  margin-top: 5px;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 20px;
   border: 1px solid ${COLORS.mediumGrey};
 `;
 
@@ -33,12 +39,12 @@ function ChartCard() {
   }, []);
 
   const data = useSelector(chartSelectors.dataSelector);
-  // const { dataFlattened, dataKeys } = flattenData(data);
+
   const nivoData = formatDataForNivo(data);
 
   return (
     <>
-      <h1>Covid Chart</h1>
+      <StyledChartTitle>Covid Chart</StyledChartTitle>
       <StyledChartCardDiv>
         {data.length > 0 && (
           <>
