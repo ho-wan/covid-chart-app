@@ -27,3 +27,9 @@ export interface RegionData {
   co: string;
   n: number;
 }
+
+export interface DeltaData {
+  country: string;
+  cases: number;
+  delta: number;
+}

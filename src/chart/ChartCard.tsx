@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
-import { formatDataForNivo } from "./utils/chartHelpers";
+import { formatDataForNivo, getMostRecentDelta } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledChartTitle = styled.h3`
@@ -38,20 +38,31 @@ function ChartCard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const data = useSelector(chartSelectors.dataSelector);
+  const dateData = useSelector(chartSelectors.dataSelector);
 
-  const nivoData = formatDataForNivo(data);
+  const nivoData = dateData.length > 0 ? formatDataForNivo(dateData) : [];
 
-  // only show first 10 countries to render faster
-  const nivoDataSlice = nivoData.slice(0, 10)
+  const lastDelta = getMostRecentDelta(dateData);
+  console.log(lastDelta.slice(0, 10));
+
+  // only show first 10 countries to render faster - TODO show 10 largest only
+  const data = nivoData.slice(0, 10);
 
   return (
     <>
       <StyledChartTitle>Covid Chart</StyledChartTitle>
       <StyledChartCardDiv>
-        {nivoData.length > 0 && (
+        {data.length > 0 && (
           <>
-            <ResponsiveLine data={nivoDataSlice} />
+            <ResponsiveLine
+              data={data}
+              margin={{ top: 20, right: 20, bottom: 20, left: 40 }}
+              xScale={{ type: "point" }}
+              yScale={{ type: "linear", min: "auto", max: "auto" }}
+              axisTop={null}
+              axisRight={null}
+              colors={{ scheme: "nivo" }}
+            />
           </>
         )}
       </StyledChartCardDiv>
