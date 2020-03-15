@@ -1,16 +1,11 @@
-import { Serie } from "@nivo/line";
-import { DateData } from "../chart.types";
+import { Datum, Serie } from "@nivo/line";
+import { DateData, DeltaData } from "../chart.types";
 
-export const formatDataForNivo = function(data: DateData[]): Serie[] {
-  if (!data || data.length == 0) return [];
+export const formatDataForNivo = function(data: DateData[], deltaData: boolean = false): Serie[] {
+  if (data == undefined || data.length == 0) return [];
 
   interface TempDict {
-    [key: string]: DataPoint[];
-  }
-
-  interface DataPoint {
-    x: string;
-    y: number;
+    [key: string]: Datum[];
   }
 
   // get dict of all countries from first item in list
@@ -20,11 +15,12 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   });
 
   // iterate through dates, add data to dict of countries
-  data.forEach(dd => {
-    dd.regionData.forEach(rd => {
+  data.forEach((dd, dateIdx) => {
+    dd.regionData.forEach((rd, regIdx) => {
+      const casesPrevDay = dateIdx > 1 ? data[dateIdx - 1].regionData[regIdx].n : 0;
       tDict[rd.co].push({
-        x: dd.date,
-        y: rd.n,
+        x: new Date(Date.parse(dd.date)),
+        y: deltaData ? rd.n - casesPrevDay : rd.n,
       });
     });
   });
@@ -38,4 +34,31 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   }
 
   return nivoData;
+};
+
+// returns country and most recent delta of cases sorted (most recent day - previous day) - largest first
+export const getMostRecentDelta = function(data: DateData[]): DeltaData[] {
+  if (data == undefined || data.length == 0) return [];
+
+  const casesDelta = data[data.length - 1].regionData.map((rd, idx) => ({
+    country: rd.co,
+    cases: rd.n,
+    delta: rd.n - data[data.length - 2].regionData[idx].n,
+  }));
+  casesDelta.sort((a, b) => b.delta - a.delta);
+  return casesDelta;
+};
+
+// getLastNDaysData returns last n days of data
+export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[] {
+  if (serie == undefined || serie.length == 0) return [];
+
+  const resData = serie.map(v => {
+    const tData = v.data.slice(Math.max(v.data.length - nDays, 0));
+    return {
+      id: v.id,
+      data: tData,
+    };
+  });
+  return resData;
 };
