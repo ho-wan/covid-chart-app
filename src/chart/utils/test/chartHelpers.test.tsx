@@ -8,11 +8,11 @@ test("formats data for Nivo charts", () => {
       id: "China",
       data: [
         {
-          x: "2020-03-06",
+          x: new Date(Date.parse("2020-03-06")),
           y: 900,
         },
         {
-          x: "2020-03-05",
+          x: new Date(Date.parse("2020-03-05")),
           y: 800,
         },
       ],
@@ -21,11 +21,11 @@ test("formats data for Nivo charts", () => {
       id: "Japan",
       data: [
         {
-          x: "2020-03-06",
+          x: new Date(Date.parse("2020-03-06")),
           y: 420,
         },
         {
-          x: "2020-03-05",
+          x: new Date(Date.parse("2020-03-05")),
           y: 360,
         },
       ],
