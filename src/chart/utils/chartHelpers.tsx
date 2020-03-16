@@ -19,8 +19,10 @@ export const formatDataForNivo = function(data: DateData[], deltaData: boolean =
     dd.regionData.forEach((rd, regIdx) => {
       const casesPrevDay = dateIdx > 1 ? data[dateIdx - 1].regionData[regIdx].n : 0;
       tDict[rd.co].push({
-        x: new Date(Date.parse(dd.date)),
+        x: dd.date,
         y: deltaData ? rd.n - casesPrevDay : rd.n,
+        cases: rd.n,
+        delta: rd.n - casesPrevDay,
       });
     });
   });
@@ -61,4 +63,13 @@ export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[]
     };
   });
   return resData;
+};
+
+// returns 2020-03-04 as 03-04
+export const formatDateString = function(date: string | number | Date) {
+  return date
+    .toString()
+    .split("-")
+    .slice(1)
+    .join("-");
 };
