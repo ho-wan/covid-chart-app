@@ -17,7 +17,7 @@ export const formatDataForNivo = function(data: DateData[], deltaData: boolean =
   // iterate through dates, add data to dict of countries
   data.forEach((dd, dateIdx) => {
     dd.regionData.forEach((rd, regIdx) => {
-      const casesPrevDay = dateIdx > 1 ? data[dateIdx - 1].regionData[regIdx].n : 0;
+      const casesPrevDay = dateIdx > 0 ? data[dateIdx - 1].regionData[regIdx].n : 0;
       tDict[rd.co].push({
         x: dd.date,
         y: deltaData ? rd.n - casesPrevDay : rd.n,

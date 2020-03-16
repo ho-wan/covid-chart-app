@@ -2,7 +2,6 @@ import { ResponsiveLine } from "@nivo/line";
 import React, { ReactText, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-// import { DateData } from "./chart.types";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 import { formatDataForNivo, formatDateString, getLastNDaysData, getMostRecentDelta } from "./utils/chartHelpers";
