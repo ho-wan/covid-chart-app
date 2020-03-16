@@ -3,6 +3,7 @@ export const COLORS = {
   white: "#ffffff",
   primary: "#7433ff",
   secondary: "#50e3c2",
+  transparency80: "CC",
 };
 
 export const COVID_API_URL = {

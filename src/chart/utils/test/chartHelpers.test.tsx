@@ -8,12 +8,16 @@ test("formats data for Nivo charts", () => {
       id: "China",
       data: [
         {
-          x: "2020-03-06",
-          y: 900,
-        },
-        {
           x: "2020-03-05",
           y: 800,
+          cases: 800,
+          delta: 800,
+        },
+        {
+          x: "2020-03-06",
+          y: 900,
+          cases: 900,
+          delta: 100,
         },
       ],
     },
@@ -21,32 +25,22 @@ test("formats data for Nivo charts", () => {
       id: "Japan",
       data: [
         {
-          x: "2020-03-06",
-          y: 420,
-        },
-        {
           x: "2020-03-05",
           y: 360,
+          cases: 360,
+          delta: 360,
+        },
+        {
+          x: "2020-03-06",
+          y: 420,
+          cases: 420,
+          delta: 60,
         },
       ],
     },
   ];
 
   const rawData: DateData[] = [
-    {
-      date: "2020-03-06",
-      reportNumber: 2,
-      regionData: [
-        {
-          co: "China",
-          n: 900,
-        },
-        {
-          co: "Japan",
-          n: 420,
-        },
-      ],
-    },
     {
       date: "2020-03-05",
       reportNumber: 1,
@@ -58,6 +52,20 @@ test("formats data for Nivo charts", () => {
         {
           co: "Japan",
           n: 360,
+        },
+      ],
+    },
+    {
+      date: "2020-03-06",
+      reportNumber: 2,
+      regionData: [
+        {
+          co: "China",
+          n: 900,
+        },
+        {
+          co: "Japan",
+          n: 420,
         },
       ],
     },
