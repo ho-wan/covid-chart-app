@@ -1,5 +1,5 @@
-import { ResponsiveLine } from "@nivo/line";
-import React, { ReactText, useEffect } from "react";
+import { ResponsiveLine, Serie } from "@nivo/line";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
@@ -24,7 +24,6 @@ const StyledChartCardDiv = styled.div`
     margin-left: auto;
     margin-right: auto;
   }
-
 
   @media (min-height: 700px) {
     height: 650px;
@@ -90,11 +89,19 @@ function ChartCard() {
   const nivoData = formatDataForNivo(dateData, showDelta);
 
   // array of the top nCountries with largest increase in cases
-  const mostDeltaCountries: ReactText[] = getMostRecentDelta(dateData)
+  const mostDeltaCountries = getMostRecentDelta(dateData)
     .slice(0, nCountries)
     .map(dd => dd.country);
 
-  const filteredData = nivoData.filter(v => mostDeltaCountries.includes(v.id));
+  // add countries in order of delta - TODO can make this more efficient using a hash
+  const filteredData: Serie[] = [];
+  mostDeltaCountries.forEach(co => {
+    nivoData.forEach(s => {
+      if (s.id.toString() === co) {
+        filteredData.push(s);
+      }
+    });
+  });
 
   // reverse to show legend in correcy order
   const data = getLastNDaysData(filteredData, nDays).reverse();
@@ -108,7 +115,7 @@ function ChartCard() {
             <ResponsiveLine
               data={data}
               margin={{ top: 20, right: 100, bottom: 20, left: 60 }}
-              yScale={{ type: "linear", min: "auto", max: "auto", stacked: true }}
+              yScale={{ type: "linear", min: "auto", max: "auto"}}
               xScale={{ type: "point" }}
               xFormat={formatDateString}
               axisBottom={{
