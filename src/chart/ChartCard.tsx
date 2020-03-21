@@ -5,18 +5,23 @@ import styled from "styled-components";
 import ToggleSwitch from "./components/ToggleSwitch";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
-import { formatDataForNivo, formatDateString, getLastNDaysData, getMostRecentDelta } from "./utils/chartHelpers";
+// prettier-ignore
+import { formatDataForNivo, formatDateString, getLastNDaysData, getDeltaData, sortDataByDelta, sortDataByCases } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledChartTitle = styled.h4`
   @media (min-height: 600px) {
     font-size: 30px;
-    margin: 20px;
+    margin-top: 20px;
   }
 
   padding: 5px;
   margin: 0px;
 `;
+
+const StyledControlsDiv = styled.div`
+  font-size: 12px;
+`
 
 const StyledChartCardDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
@@ -43,7 +48,7 @@ const StyledChartCardDiv = styled.div`
   background-color: ${COLORS.white};
   margin: 10px;
   padding: 10px;
-  margin-top: 0px;
+  margin-top: 5px;
   padding-top: 0px;
   border-radius: 10px;
   border: 1px solid ${COLORS.mediumGrey};
@@ -66,8 +71,8 @@ function CustomTooltip(props: React.PropsWithChildren<any>) {
     <StyledCustomTooltipDiv>
       <b>{point.serieId}</b>
       <div>{point.data.xFormatted}</div>
-      <div>{`cases: ${point.data.cases}`}</div>
-      <div>{`delta: ${point.data.delta}`}</div>
+      <div>{`Total: ${point.data.cases}`}</div>
+      <div>{`Delta: ${point.data.delta}`}</div>
     </StyledCustomTooltipDiv>
   );
 }
@@ -90,13 +95,17 @@ function ChartCard() {
   const nivoData = formatDataForNivo(dateData, showDelta);
 
   // array of the top nCountries with largest increase in cases
-  const mostDeltaCountries = getMostRecentDelta(dateData)
-    .slice(0, nCountries)
-    .map(dd => dd.country);
+  const dataWithDelta = getDeltaData(dateData);
+
+  // sort by delta or cases
+  const orderedData = showDelta ? sortDataByDelta(dataWithDelta) : sortDataByCases(dataWithDelta);
+
+  // get list of names for the top N number of countries - TODO use UID instead of string
+  let orderedCountries = orderedData.slice(0, nCountries).map(dd => dd.country);
 
   // add countries in order of delta - TODO can make this more efficient using a hash
   const filteredData: Serie[] = [];
-  mostDeltaCountries.forEach(co => {
+  orderedCountries.forEach(co => {
     nivoData.forEach(s => {
       if (s.id.toString() === co) {
         filteredData.push(s);
@@ -105,20 +114,20 @@ function ChartCard() {
   });
 
   // reverse to show legend in correcy order
-  const data = getLastNDaysData(filteredData, nDays).reverse();
+  let data = getLastNDaysData(filteredData, nDays).reverse();
 
   return (
     <>
-      <StyledChartTitle>{"DeltaCov Chart - countries with highest daily increase in cases"}</StyledChartTitle>
-      <div>
+      <StyledChartTitle>{"DeltaCov Chart"}</StyledChartTitle>
+      <StyledControlsDiv>
         Delta <ToggleSwitch onChange={() => setShowDelta(!showDelta)} /> Total
-      </div>
+      </StyledControlsDiv>
       <StyledChartCardDiv>
         {data.length > 0 && (
           <>
             <ResponsiveLine
               data={data}
-              margin={{ top: 20, right: 60, bottom: 20, left: 20 }}
+              margin={{ top: 10, right: 60, bottom: 20, left: 10 }}
               yScale={{ type: "linear", min: "auto", max: "auto" }}
               xFormat={formatDateString}
               xScale={{
@@ -157,15 +166,6 @@ function ChartCard() {
                   symbolSize: 12,
                   symbolShape: "circle",
                   symbolBorderColor: "rgba(0, 0, 0, .5)",
-                  effects: [
-                    {
-                      on: "hover",
-                      style: {
-                        itemBackground: "rgba(0, 0, 0, .03)",
-                        itemOpacity: 1,
-                      },
-                    },
-                  ],
                 },
               ]}
             />

@@ -39,7 +39,7 @@ export const formatDataForNivo = function(data: DateData[], deltaData: boolean =
 };
 
 // returns country and most recent delta of cases sorted (most recent day - previous day) - largest first
-export const getMostRecentDelta = function(data: DateData[]): DeltaData[] {
+export const getDeltaData = function(data: DateData[]): DeltaData[] {
   if (data == undefined || data.length == 0) return [];
 
   const casesDelta = data[data.length - 1].regionData.map((rd, idx) => ({
@@ -47,9 +47,16 @@ export const getMostRecentDelta = function(data: DateData[]): DeltaData[] {
     cases: rd.n,
     delta: rd.n - data[data.length - 2].regionData[idx].n,
   }));
-  casesDelta.sort((a, b) => b.delta - a.delta);
   return casesDelta;
 };
+
+export const sortDataByDelta = function(data: DeltaData[]): DeltaData[] {
+  return data.sort((a, b) => b.delta - a.delta);
+}
+
+export const sortDataByCases = function(data: DeltaData[]): DeltaData[] {
+  return data.sort((a, b) => (b.cases - a.cases))
+}
 
 // getLastNDaysData returns last n days of data
 export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[] {
