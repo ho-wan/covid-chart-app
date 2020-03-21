@@ -2,6 +2,8 @@
 
 React app to visualize covid data
 
+https://covid.spandraw.com/
+
 ---
 
 To start:
