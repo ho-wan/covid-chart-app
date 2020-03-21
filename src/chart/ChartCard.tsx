@@ -74,7 +74,7 @@ function CustomTooltip(props: React.PropsWithChildren<any>) {
 function ChartCard() {
   // TODO move to state
   const nDays = 13;
-  const nCountries = 10;
+  const nCountries = 8;
   const showDelta = true;
 
   const dispatch = useDispatch();
@@ -114,12 +114,11 @@ function ChartCard() {
           <>
             <ResponsiveLine
               data={data}
-              margin={{ top: 20, right: 100, bottom: 20, left: 60 }}
-              yScale={{ type: "linear", min: "auto", max: "auto"}}
+              margin={{ top: 20, right: 20, bottom: 20, left: 60 }}
+              yScale={{ type: "linear", min: "auto", max: "auto" }}
               xScale={{ type: "point" }}
               xFormat={formatDateString}
               axisBottom={{
-                // tickValues: "every 2 days",
                 format: formatDateString,
               }}
               axisLeft={{
@@ -127,7 +126,7 @@ function ChartCard() {
                 legendOffset: -50,
                 legendPosition: "middle",
               }}
-              colors={{ scheme: "nivo" }}
+              colors={{ scheme: "category10" }}
               pointSize={5}
               pointColor={{ theme: "background" }}
               pointBorderWidth={2}
@@ -136,14 +135,14 @@ function ChartCard() {
               tooltip={CustomTooltip}
               legends={[
                 {
-                  anchor: "bottom-right",
+                  anchor: "top-left",
                   direction: "column",
                   justify: false,
-                  translateX: 100,
-                  translateY: 0,
+                  translateX: 10,
+                  translateY: 10,
                   itemsSpacing: 0,
                   itemDirection: "left-to-right",
-                  itemWidth: 80,
+                  itemWidth: 0,
                   itemHeight: 20,
                   itemOpacity: 0.75,
                   symbolSize: 12,
