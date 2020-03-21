@@ -1,7 +1,8 @@
 import { ResponsiveLine, Serie } from "@nivo/line";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import ToggleSwitch from "./components/ToggleSwitch";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 import { formatDataForNivo, formatDateString, getLastNDaysData, getMostRecentDelta } from "./utils/chartHelpers";
@@ -72,10 +73,10 @@ function CustomTooltip(props: React.PropsWithChildren<any>) {
 }
 
 function ChartCard() {
+  const [showDelta, setShowDelta] = useState(true);
   // TODO move to state
   const nDays = 13;
   const nCountries = 8;
-  const showDelta = true;
 
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -109,6 +110,9 @@ function ChartCard() {
   return (
     <>
       <StyledChartTitle>{`Covid-19: Countries with highest daily increase in cases (delta)`}</StyledChartTitle>
+      <div>
+        Delta <ToggleSwitch onChange={() => setShowDelta(!showDelta)} /> Total
+      </div>
       <StyledChartCardDiv>
         {data.length > 0 && (
           <>
