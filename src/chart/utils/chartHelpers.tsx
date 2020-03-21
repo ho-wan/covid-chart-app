@@ -19,7 +19,7 @@ export const formatDataForNivo = function(data: DateData[], deltaData: boolean =
     dd.regionData.forEach((rd, regIdx) => {
       const casesPrevDay = dateIdx > 0 ? data[dateIdx - 1].regionData[regIdx].n : 0;
       tDict[rd.co].push({
-        x: dd.date,
+        x: new Date(Date.parse(dd.date)),
         y: deltaData ? rd.n - casesPrevDay : rd.n,
         cases: rd.n,
         delta: rd.n - casesPrevDay,
@@ -67,7 +67,11 @@ export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[]
 
 // returns 2020-03-04 as 03-04
 export const formatDateString = function(date: string | number | Date) {
-  return date
+  let dateString = date;
+  if (date instanceof Date) {
+    dateString = date.toISOString().split("T")[0];
+  }
+  return dateString
     .toString()
     .split("-")
     .slice(1)

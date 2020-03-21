@@ -109,7 +109,7 @@ function ChartCard() {
 
   return (
     <>
-      <StyledChartTitle>{`Covid-19: Countries with highest daily increase in cases (delta)`}</StyledChartTitle>
+      <StyledChartTitle>{"DeltaCov Chart - countries with highest daily increase in cases"}</StyledChartTitle>
       <div>
         Delta <ToggleSwitch onChange={() => setShowDelta(!showDelta)} /> Total
       </div>
@@ -118,16 +118,21 @@ function ChartCard() {
           <>
             <ResponsiveLine
               data={data}
-              margin={{ top: 20, right: 20, bottom: 20, left: 60 }}
+              margin={{ top: 20, right: 60, bottom: 20, left: 20 }}
               yScale={{ type: "linear", min: "auto", max: "auto" }}
-              xScale={{ type: "point" }}
               xFormat={formatDateString}
-              axisBottom={{
-                format: formatDateString,
+              xScale={{
+                type: "time",
+                precision: "day",
               }}
-              axisLeft={{
-                legend: showDelta ? "Delta (daily increase in cases)" : "cases",
-                legendOffset: -50,
+              axisBottom={{
+                tickValues: "every 2 days",
+                format: "%b %d",
+              }}
+              axisLeft={null}
+              axisRight={{
+                legend: showDelta ? "Delta (daily increase in cases)" : "Total cases",
+                legendOffset: 50,
                 legendPosition: "middle",
               }}
               colors={{ scheme: "category10" }}
