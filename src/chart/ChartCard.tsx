@@ -1,14 +1,13 @@
 import { ResponsiveLine, Serie } from "@nivo/line";
+import { Spin, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import ToggleSwitch from "./components/ToggleSwitch";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
-import { formatDataForNivo, formatDateString, getLastNDaysData, getDeltaData, sortDataByDelta, sortDataByCases } from "./utils/chartHelpers";
+import { formatDataForNivo, formatDateString, getDeltaData, getLastNDaysData, sortDataByCases, sortDataByDelta } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
-import { Button } from 'antd';
 
 const StyledChartTitle = styled.h4`
   @media (min-height: 600px) {
@@ -22,7 +21,7 @@ const StyledChartTitle = styled.h4`
 
 const StyledControlsDiv = styled.div`
   font-size: 12px;
-`
+`;
 
 const StyledChartCardDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
@@ -33,10 +32,10 @@ const StyledChartCardDiv = styled.div`
   }
 
   @media (min-height: 700px) {
-    height: 650px;
+    height: 600px;
   }
 
-  @media (min-height: 500px) and (max-height: 700px) {
+  @media (min-height: 550px) and (max-height: 700px) {
     height: 450px;
   }
 
@@ -48,11 +47,17 @@ const StyledChartCardDiv = styled.div`
 
   background-color: ${COLORS.white};
   margin: 10px;
-  padding: 10px;
-  margin-top: 5px;
+  padding: 5px;
   padding-top: 0px;
   border-radius: 10px;
   border: 1px solid ${COLORS.mediumGrey};
+`;
+
+const StyledSpinnerDiv = styled.div`
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
 `;
 
 const StyledCustomTooltipDiv = styled.div`
@@ -64,7 +69,7 @@ const StyledCustomTooltipDiv = styled.div`
   border: 1px solid ${COLORS.mediumGrey};
 `;
 
-// use any inplace of fPointTooltipProps
+// use any inplace of PointTooltipProps
 function CustomTooltip(props: React.PropsWithChildren<any>) {
   const { point } = props;
 
@@ -121,15 +126,19 @@ function ChartCard() {
     <>
       <StyledChartTitle>{"DeltaCov Chart"}</StyledChartTitle>
       <StyledControlsDiv>
-        Delta <ToggleSwitch onChange={() => setShowDelta(!showDelta)} /> Total
-        <Button type="primary">Button</Button>
+        Delta <Switch onChange={() => setShowDelta(!showDelta)} /> Total
       </StyledControlsDiv>
       <StyledChartCardDiv>
+        {data.length == 0 && (
+          <StyledSpinnerDiv>
+            <Spin tip="Loading..." size="large" />
+          </StyledSpinnerDiv>
+        )}
         {data.length > 0 && (
           <>
             <ResponsiveLine
               data={data}
-              margin={{ top: 10, right: 60, bottom: 20, left: 10 }}
+              margin={{ top: 20, right: 60, bottom: 25, left: 20 }}
               yScale={{ type: "linear", min: "auto", max: "auto" }}
               xFormat={formatDateString}
               xScale={{
@@ -138,7 +147,7 @@ function ChartCard() {
               }}
               axisBottom={{
                 tickValues: "every 2 days",
-                format: "%b %d",
+                format: "%d %b",
               }}
               axisLeft={null}
               axisRight={{
@@ -158,8 +167,8 @@ function ChartCard() {
                   anchor: "top-left",
                   direction: "column",
                   justify: false,
-                  translateX: 10,
-                  translateY: 10,
+                  translateX: 5,
+                  translateY: 5,
                   itemsSpacing: 0,
                   itemDirection: "left-to-right",
                   itemWidth: 0,
@@ -174,9 +183,6 @@ function ChartCard() {
           </>
         )}
       </StyledChartCardDiv>
-      <div>
-        <p></p>
-      </div>
     </>
   );
 }
