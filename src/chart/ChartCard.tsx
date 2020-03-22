@@ -8,6 +8,7 @@ import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
 import { formatDataForNivo, formatDateString, getLastNDaysData, getDeltaData, sortDataByDelta, sortDataByCases } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
+import { Button } from 'antd';
 
 const StyledChartTitle = styled.h4`
   @media (min-height: 600px) {
@@ -121,6 +122,7 @@ function ChartCard() {
       <StyledChartTitle>{"DeltaCov Chart"}</StyledChartTitle>
       <StyledControlsDiv>
         Delta <ToggleSwitch onChange={() => setShowDelta(!showDelta)} /> Total
+        <Button type="primary">Button</Button>
       </StyledControlsDiv>
       <StyledChartCardDiv>
         {data.length > 0 && (
