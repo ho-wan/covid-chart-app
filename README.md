@@ -16,7 +16,6 @@ To debug, start locally on localhost:3000, then in vscode launch debugger using 
 
 # TODO
 
-- select date range (7, 14, 28, 46)
 - select number of countries (4, 8, 16, 32)
 
 - add moving average option for delta

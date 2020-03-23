@@ -189,6 +189,7 @@ function ChartCard() {
               pointBorderColor={{ from: "serieColor" }}
               useMesh={true}
               tooltip={CustomTooltip}
+              crosshairType="bottom-right"
               legends={[
                 {
                   anchor: "top-left",
