@@ -52,11 +52,11 @@ export const getDeltaData = function(data: DateData[]): DeltaData[] {
 
 export const sortDataByDelta = function(data: DeltaData[]): DeltaData[] {
   return data.sort((a, b) => b.delta - a.delta);
-}
+};
 
 export const sortDataByCases = function(data: DeltaData[]): DeltaData[] {
-  return data.sort((a, b) => (b.cases - a.cases))
-}
+  return data.sort((a, b) => b.cases - a.cases);
+};
 
 // getLastNDaysData returns last n days of data
 export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[] {
@@ -83,4 +83,11 @@ export const formatDateString = function(date: string | number | Date) {
     .split("-")
     .slice(1)
     .join("-");
+};
+
+export const tickSpacing: { [key: number]: string } = {
+  7: "1",
+  14: "2",
+  28: "4",
+  56: "8",
 };

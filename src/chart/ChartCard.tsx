@@ -1,12 +1,12 @@
 import { ResponsiveLine, Serie } from "@nivo/line";
-import { Spin, Switch } from "antd";
+import { Radio, Row, Select, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
-import { formatDataForNivo, formatDateString, getDeltaData, getLastNDaysData, sortDataByCases, sortDataByDelta } from "./utils/chartHelpers";
+import { formatDataForNivo, formatDateString, getDeltaData, getLastNDaysData, sortDataByCases, sortDataByDelta, tickSpacing } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledChartTitle = styled.h4`
@@ -19,18 +19,20 @@ const StyledChartTitle = styled.h4`
   margin: 0px;
 `;
 
-const StyledControlsDiv = styled.div`
-  font-size: 12px;
+const StyledControlElementDiv = styled.div`
+  margin-left: 10px;
 `;
 
-const StyledChartCardDiv = styled.div`
+const StyledChartCardPageDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
   @media (min-width: ${CHART_PROPS.chartWidth + 100}px) {
     width: ${CHART_PROPS.chartWidth}px;
     margin-left: auto;
     margin-right: auto;
   }
+`;
 
+const StyledChartCardDiv = styled.div`
   @media (min-height: 700px) {
     height: 600px;
   }
@@ -84,9 +86,13 @@ function CustomTooltip(props: React.PropsWithChildren<any>) {
 }
 
 function ChartCard() {
-  const [showDelta, setShowDelta] = useState(true);
+  const initialState = {
+    showDelta: true,
+    dateRange: 14,
+  };
+  const [showDelta, setShowDelta] = useState(initialState.showDelta);
+  const [dateRange, setDateRange] = useState(initialState.dateRange);
   // TODO move to state
-  const nDays = 13;
   const nCountries = 8;
 
   const dispatch = useDispatch();
@@ -120,14 +126,35 @@ function ChartCard() {
   });
 
   // reverse to show legend in correcy order
-  let data = getLastNDaysData(filteredData, nDays).reverse();
+  let data = getLastNDaysData(filteredData, dateRange).reverse();
 
   return (
-    <>
+    <StyledChartCardPageDiv>
       <StyledChartTitle>{"DeltaCov Chart"}</StyledChartTitle>
-      <StyledControlsDiv>
-        Delta <Switch onChange={() => setShowDelta(!showDelta)} /> Total
-      </StyledControlsDiv>
+      <Row>
+        <StyledControlElementDiv>
+          <Radio.Group
+            defaultValue="delta"
+            onChange={e => setShowDelta(e.target.value === "delta")}
+            buttonStyle="solid"
+          >
+            <Radio.Button value="delta">Delta</Radio.Button>
+            <Radio.Button value="total">Total</Radio.Button>
+          </Radio.Group>
+        </StyledControlElementDiv>
+        <StyledControlElementDiv>
+          <Select
+            defaultValue={initialState.dateRange}
+            onChange={e => setDateRange(e.valueOf())}
+            style={{ width: 120 }}
+          >
+            <Select.Option value={7}>7 Days</Select.Option>
+            <Select.Option value={14}>14 Days</Select.Option>
+            <Select.Option value={28}>28 Days</Select.Option>
+            <Select.Option value={56}>56 Days</Select.Option>
+          </Select>
+        </StyledControlElementDiv>
+      </Row>
       <StyledChartCardDiv>
         {data.length == 0 && (
           <StyledSpinnerDiv>
@@ -146,7 +173,7 @@ function ChartCard() {
                 precision: "day",
               }}
               axisBottom={{
-                tickValues: "every 2 days",
+                tickValues: `every ${tickSpacing[dateRange]} days`,
                 format: "%d %b",
               }}
               axisLeft={null}
@@ -183,7 +210,7 @@ function ChartCard() {
           </>
         )}
       </StyledChartCardDiv>
-    </>
+    </StyledChartCardPageDiv>
   );
 }
 
