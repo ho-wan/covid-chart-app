@@ -1,5 +1,5 @@
 import { ResponsiveLine, Serie } from "@nivo/line";
-import { Radio, Row, Select, Spin } from "antd";
+import { Col, Radio, Row, Select, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -9,19 +9,25 @@ import { chartSelectors } from "./redux/chart.reducer";
 import { formatDataForNivo, formatDateString, getDeltaData, getLastNDaysData, sortDataByCases, sortDataByDelta, tickSpacing } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
-const StyledChartTitle = styled.h4`
-  @media (min-height: 600px) {
-    font-size: 30px;
-    margin-top: 20px;
+const StyledTitleCol = styled(Col)`
+  @media (max-width: 400px) {
+    width: 100%;
   }
 
-  padding: 5px;
+  @media (min-width: 400px) and (min-height: 600px) {
+    font-size: 30px;
+  }
+`;
+
+const StyledChartTitleH2 = styled.h2`
   margin: 0px;
 `;
 
-const StyledControlElementDiv = styled.div`
-  margin-left: 10px;
+const StyledRow = styled(Row)`
+  margin-top: 10px;
 `;
+
+const StyledControlElementCol = styled(Col)``;
 
 const StyledChartCardPageDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
@@ -130,9 +136,11 @@ function ChartCard() {
 
   return (
     <StyledChartCardPageDiv>
-      <StyledChartTitle>{"DeltaCov Chart"}</StyledChartTitle>
-      <Row>
-        <StyledControlElementDiv>
+      <StyledRow justify="start" align="middle">
+        <StyledTitleCol>
+          <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
+        </StyledTitleCol>
+        <StyledControlElementCol>
           <Radio.Group
             defaultValue="delta"
             onChange={e => setShowDelta(e.target.value === "delta")}
@@ -141,8 +149,8 @@ function ChartCard() {
             <Radio.Button value="delta">Delta</Radio.Button>
             <Radio.Button value="total">Total</Radio.Button>
           </Radio.Group>
-        </StyledControlElementDiv>
-        <StyledControlElementDiv>
+        </StyledControlElementCol>
+        <StyledControlElementCol>
           <Select
             defaultValue={initialState.dateRange}
             onChange={e => setDateRange(e.valueOf())}
@@ -151,10 +159,9 @@ function ChartCard() {
             <Select.Option value={7}>7 Days</Select.Option>
             <Select.Option value={14}>14 Days</Select.Option>
             <Select.Option value={28}>28 Days</Select.Option>
-            <Select.Option value={56}>56 Days</Select.Option>
           </Select>
-        </StyledControlElementDiv>
-      </Row>
+        </StyledControlElementCol>
+      </StyledRow>
       <StyledChartCardDiv>
         {data.length == 0 && (
           <StyledSpinnerDiv>
