@@ -1,6 +1,6 @@
 import { Serie } from "@nivo/line";
 import { DateData } from "../../chart.types";
-import { EMACalc, formatDataForNivo } from "../chartHelpers";
+import { EMACalc, formatDataForNivo, SMACalc } from "../chartHelpers";
 
 test("formats data for Nivo charts", () => {
   const want: Serie[] = [
@@ -93,6 +93,33 @@ describe("EMACalc", () => {
     const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const range = 1;
     const got = EMACalc(nums, range);
+    expect(got).toEqual(nums);
+  });
+});
+
+describe("SMACalc", () => {
+  test("range=5", () => {
+    const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const range = 5;
+    const got = SMACalc(nums, range);
+    const want = [
+      1,
+      1.5,
+      2,
+      2.5,
+      3,
+      4,
+      5,
+      6,
+      7,
+    ];
+    expect(got).toEqual(want);
+  });
+
+  test("range=1", () => {
+    const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const range = 1;
+    const got = SMACalc(nums, range);
     expect(got).toEqual(nums);
   });
 });

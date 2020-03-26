@@ -73,13 +73,31 @@ export const getYValueForData = function(data: Serie[], showDelta: boolean) {
   return resData;
 };
 
+// Simple moving average
+export const SMACalc = function(mArray: number[], mRange: number) {
+  let sum = mArray[0];
+  let smaArray = [sum];
+  for (let i = 1, n = mArray.length; i < n; i++) {
+    let av;
+    if (i < mRange) {
+      sum += mArray[i]
+      av = sum / (i + 1)
+    } else {
+      sum += mArray[i] - mArray[i - mRange]
+      av = sum / mRange
+    }
+    smaArray.push(av);
+  }
+  return smaArray;
+}
+
 // Exponential moving average: source https://stackoverflow.com/questions/40057020/calculating-exponential-moving-average-ema-using-javascript
 export const EMACalc = function(mArray: number[], mRange: number) {
-  var k = 2/(mRange + 1);
+  let k = 2/(mRange + 1);
   // first item is just the same as the first item in the input
   let emaArray = [mArray[0]];
   // for the rest of the items, they are computed with the previous one
-  for (var i = 1; i < mArray.length; i++) {
+  for (let i = 1; i < mArray.length; i++) {
     emaArray.push(mArray[i] * k + emaArray[i - 1] * (1 - k));
   }
   return emaArray;
