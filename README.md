@@ -16,13 +16,13 @@ To debug, start locally on localhost:3000, then in vscode launch debugger using 
 
 # TODO
 
-- select number of countries (4, 8, 16, 32)
-
 - add moving average option for delta
 - add delta of delta
+- add About window
 
 - select individual countries on click
 - open table to see full list of data
   - filter table and set date
-
 - filter countries by selection
+
+- toggle between cases and deaths

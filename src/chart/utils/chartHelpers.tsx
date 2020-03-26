@@ -91,3 +91,37 @@ export const tickSpacing: { [key: number]: string } = {
   28: "4",
   56: "8",
 };
+
+export interface StateForData {
+  showDelta: boolean;
+  dateRange: number;
+  nCountries: number;
+}
+
+// format data to display in chart
+export const getFormattedData = function(dateData: DateData[], { showDelta, dateRange, nCountries }: StateForData) {
+  const nivoData = formatDataForNivo(dateData, showDelta);
+
+  // array of the top nCountries with largest increase in cases
+  const dataWithDelta = getDeltaData(dateData);
+
+  // sort by delta or cases
+  const orderedData = showDelta ? sortDataByDelta(dataWithDelta) : sortDataByCases(dataWithDelta);
+
+  // get list of names for the top N number of countries - TODO use UID instead of string
+  let orderedCountries = orderedData.slice(0, nCountries).map(dd => dd.country);
+
+  // add countries in order of delta - TODO can make this more efficient using a hash
+  const filteredData: Serie[] = [];
+  orderedCountries.forEach(co => {
+    nivoData.forEach(s => {
+      if (s.id.toString() === co) {
+        filteredData.push(s);
+      }
+    });
+  });
+
+  // reverse to show legend in correcy order
+  let data = getLastNDaysData(filteredData, dateRange).reverse();
+  return data;
+};

@@ -1,4 +1,4 @@
-import { ResponsiveLine, Serie } from "@nivo/line";
+import { ResponsiveLine } from "@nivo/line";
 import { Col, Radio, Row, Select, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
-import { formatDataForNivo, formatDateString, getDeltaData, getLastNDaysData, sortDataByCases, sortDataByDelta, tickSpacing } from "./utils/chartHelpers";
+import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledTitleCol = styled(Col)`
@@ -110,29 +110,7 @@ function ChartCard() {
 
   const dateData = useSelector(chartSelectors.dataSelector);
 
-  const nivoData = formatDataForNivo(dateData, showDelta);
-
-  // array of the top nCountries with largest increase in cases
-  const dataWithDelta = getDeltaData(dateData);
-
-  // sort by delta or cases
-  const orderedData = showDelta ? sortDataByDelta(dataWithDelta) : sortDataByCases(dataWithDelta);
-
-  // get list of names for the top N number of countries - TODO use UID instead of string
-  let orderedCountries = orderedData.slice(0, nCountries).map(dd => dd.country);
-
-  // add countries in order of delta - TODO can make this more efficient using a hash
-  const filteredData: Serie[] = [];
-  orderedCountries.forEach(co => {
-    nivoData.forEach(s => {
-      if (s.id.toString() === co) {
-        filteredData.push(s);
-      }
-    });
-  });
-
-  // reverse to show legend in correcy order
-  let data = getLastNDaysData(filteredData, dateRange).reverse();
+  const data = getFormattedData(dateData, { showDelta, dateRange, nCountries });
 
   return (
     <StyledChartCardPageDiv>
