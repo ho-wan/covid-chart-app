@@ -1,7 +1,7 @@
 import { Datum, Serie } from "@nivo/line";
 import { DateData, DeltaData } from "../chart.types";
 
-export const formatDataForNivo = function(data: DateData[], deltaData: boolean = false): Serie[] {
+export const formatDataForNivo = function(data: DateData[]): Serie[] {
   if (data == undefined || data.length == 0) return [];
 
   interface TempDict {
@@ -73,6 +73,28 @@ export const getYValueForData = function(data: Serie[], showDelta: boolean) {
   return resData;
 };
 
+// Exponential moving average: source https://stackoverflow.com/questions/40057020/calculating-exponential-moving-average-ema-using-javascript
+export const EMACalc = function(mArray: number[], mRange: number) {
+  var k = 2/(mRange + 1);
+  // first item is just the same as the first item in the input
+  let emaArray = [mArray[0]];
+  // for the rest of the items, they are computed with the previous one
+  for (var i = 1; i < mArray.length; i++) {
+    emaArray.push(mArray[i] * k + emaArray[i - 1] * (1 - k));
+  }
+  return emaArray;
+}
+
+export const getMovingAverage = function(data: Serie[]) {
+  const resData = data.map(country => ({
+    id: country.id,
+    data: country.data.map(d => {
+      return d;
+    }),
+  }));
+  return resData;
+}
+
 // getLastNDaysData returns last n days of data
 export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[] {
   if (serie == undefined || serie.length == 0) return [];
@@ -119,7 +141,7 @@ export const getFormattedData = function(
   dateData: DateData[],
   { showDelta, dateRange, nCountries, movingAvDays }: StateForData
 ) {
-  const nivoData = formatDataForNivo(dateData, showDelta);
+  const nivoData = formatDataForNivo(dateData);
 
   // array of the top nCountries with largest increase in cases
   const dataWithDelta = getDeltaData(dateData);
@@ -141,6 +163,8 @@ export const getFormattedData = function(
   });
 
   let data = getYValueForData(filteredData, showDelta);
+
+  data = getMovingAverage(data);
 
   // reverse to show legend in correcy order
   data = getLastNDaysData(filteredData, dateRange).reverse();
