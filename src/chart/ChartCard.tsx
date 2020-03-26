@@ -100,6 +100,7 @@ function ChartCard() {
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   // TODO move to state
   const nCountries = 8;
+  const movingAvDays = 1;
 
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -110,7 +111,7 @@ function ChartCard() {
 
   const dateData = useSelector(chartSelectors.dataSelector);
 
-  const data = getFormattedData(dateData, { showDelta, dateRange, nCountries });
+  const data = getFormattedData(dateData, { showDelta, dateRange, nCountries, movingAvDays });
 
   return (
     <StyledChartCardPageDiv>

@@ -20,7 +20,6 @@ export const formatDataForNivo = function(data: DateData[], deltaData: boolean =
       const casesPrevDay = dateIdx > 0 ? data[dateIdx - 1].regionData[regIdx].n : 0;
       tDict[rd.co].push({
         x: new Date(Date.parse(dd.date)),
-        y: deltaData ? rd.n - casesPrevDay : rd.n,
         cases: rd.n,
         delta: rd.n - casesPrevDay,
       });
@@ -56,6 +55,22 @@ export const sortDataByDelta = function(data: DeltaData[]): DeltaData[] {
 
 export const sortDataByCases = function(data: DeltaData[]): DeltaData[] {
   return data.sort((a, b) => b.cases - a.cases);
+};
+
+// add Y value for data based on state
+export const getYValueForData = function(data: Serie[], showDelta: boolean) {
+  const resData = data.map(country => ({
+    id: country.id,
+    data: country.data.map(d => {
+      if (showDelta) {
+        d.y = d.delta;
+      } else {
+        d.y = d.cases;
+      }
+      return d;
+    }),
+  }));
+  return resData;
 };
 
 // getLastNDaysData returns last n days of data
@@ -96,10 +111,14 @@ export interface StateForData {
   showDelta: boolean;
   dateRange: number;
   nCountries: number;
+  movingAvDays: number;
 }
 
 // format data to display in chart
-export const getFormattedData = function(dateData: DateData[], { showDelta, dateRange, nCountries }: StateForData) {
+export const getFormattedData = function(
+  dateData: DateData[],
+  { showDelta, dateRange, nCountries, movingAvDays }: StateForData
+) {
   const nivoData = formatDataForNivo(dateData, showDelta);
 
   // array of the top nCountries with largest increase in cases
@@ -121,7 +140,9 @@ export const getFormattedData = function(dateData: DateData[], { showDelta, date
     });
   });
 
+  let data = getYValueForData(filteredData, showDelta);
+
   // reverse to show legend in correcy order
-  let data = getLastNDaysData(filteredData, dateRange).reverse();
+  data = getLastNDaysData(filteredData, dateRange).reverse();
   return data;
 };
