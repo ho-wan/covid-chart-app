@@ -97,6 +97,14 @@ function ChartCard() {
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
 
+  const toggleShowDelta = function(e: RadioChangeEvent) {
+    setShowDelta(!showDelta);
+
+    if (showDelta) {
+      setMovingAvDays(1);
+    }
+  };
+
   const toggleMovingAverage = function(e: RadioChangeEvent) {
     const mav = movingAvDays == 1 ? 5 : 1;
     setMovingAvDays(mav);
@@ -120,18 +128,13 @@ function ChartCard() {
       <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
       <StyledRow justify="start" align="middle">
         <StyledControlElementDiv>
-          <Radio.Group
-            defaultValue="delta"
-            onChange={e => setShowDelta(e.target.value === "delta")}
-            buttonStyle="solid"
-            size="small"
-          >
-            <Radio.Button value="delta">Delta</Radio.Button>
-            <Radio.Button value="total">Total</Radio.Button>
+          <Radio.Group value={showDelta} onChange={toggleShowDelta} buttonStyle="solid" size="small">
+            <Radio.Button value={true}>Delta</Radio.Button>
+            <Radio.Button value={false}>Total</Radio.Button>
           </Radio.Group>
         </StyledControlElementDiv>
         <StyledControlElementDiv>
-          <Radio.Group defaultValue={5} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
+          <Radio.Group value={movingAvDays} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
             <Tooltip placement="bottom" title="5 day moving average">
               <Radio.Button value={5}>Moving Av.</Radio.Button>
             </Tooltip>
