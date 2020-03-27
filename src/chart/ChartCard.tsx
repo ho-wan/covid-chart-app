@@ -1,5 +1,6 @@
 import { ResponsiveLine } from "@nivo/line";
-import { Col, Radio, Row, Select, Spin } from "antd";
+import { Col, Radio, Row, Select, Spin, Tooltip } from "antd";
+import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -9,23 +10,15 @@ import { chartSelectors } from "./redux/chart.reducer";
 import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHelpers";
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
-const StyledTitleCol = styled(Col)`
-  @media (max-width: 400px) {
-    width: 100%;
-  }
+const StyledChartTitleH2 = styled.h2`
+  margin: 0px;
 
   @media (min-width: 400px) and (min-height: 600px) {
     font-size: 30px;
   }
 `;
 
-const StyledChartTitleH2 = styled.h2`
-  margin: 0px;
-`;
-
-const StyledRow = styled(Row)`
-  margin-top: 10px;
-`;
+const StyledRow = styled(Row)``;
 
 const StyledControlElementCol = styled(Col)``;
 
@@ -39,11 +32,11 @@ const StyledChartCardPageDiv = styled.div`
 `;
 
 const StyledChartCardDiv = styled.div`
-  @media (min-height: 700px) {
+  @media (min-height: 750px) {
     height: 600px;
   }
 
-  @media (min-height: 550px) and (max-height: 700px) {
+  @media (min-height: 550px) and (max-height: 750px) {
     height: 450px;
   }
 
@@ -55,6 +48,7 @@ const StyledChartCardDiv = styled.div`
 
   background-color: ${COLORS.white};
   margin: 10px;
+  margin-bottom: 0px;
   padding: 5px;
   padding-top: 0px;
   border-radius: 10px;
@@ -95,12 +89,18 @@ function ChartCard() {
   const initialState = {
     showDelta: true,
     dateRange: 14,
+    movingAvDays: 5,
   };
   const [showDelta, setShowDelta] = useState(initialState.showDelta);
   const [dateRange, setDateRange] = useState(initialState.dateRange);
+  const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
+
+  const toggleMovingAverage = function(e: RadioChangeEvent) {
+    const mav = movingAvDays == 1 ? 5 : 1;
+    setMovingAvDays(mav);
+  };
   // TODO move to state
   const nCountries = 8;
-  const movingAvDays = 1;
 
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -115,25 +115,33 @@ function ChartCard() {
 
   return (
     <StyledChartCardPageDiv>
+      <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
       <StyledRow justify="start" align="middle">
-        <StyledTitleCol>
-          <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
-        </StyledTitleCol>
         <StyledControlElementCol>
           <Radio.Group
             defaultValue="delta"
             onChange={e => setShowDelta(e.target.value === "delta")}
             buttonStyle="solid"
+            size="small"
           >
             <Radio.Button value="delta">Delta</Radio.Button>
             <Radio.Button value="total">Total</Radio.Button>
           </Radio.Group>
         </StyledControlElementCol>
         <StyledControlElementCol>
+          <Radio.Group defaultValue={5} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
+            <Tooltip placement="bottom" title="5 day moving average">
+              <Radio.Button value={5}>Moving Av.</Radio.Button>
+            </Tooltip>
+            <Radio.Button value={1}>Raw</Radio.Button>
+          </Radio.Group>
+        </StyledControlElementCol>
+        <StyledControlElementCol>
           <Select
             defaultValue={initialState.dateRange}
             onChange={e => setDateRange(e.valueOf())}
-            style={{ width: 120 }}
+            size="small"
+            // style={{ width: 120 }}
           >
             <Select.Option value={7}>7 Days</Select.Option>
             <Select.Option value={14}>14 Days</Select.Option>

@@ -80,20 +80,20 @@ export const SMACalc = function(mArray: number[], mRange: number) {
   for (let i = 1, n = mArray.length; i < n; i++) {
     let av;
     if (i < mRange) {
-      sum += mArray[i]
-      av = sum / (i + 1)
+      sum += mArray[i];
+      av = sum / (i + 1);
     } else {
-      sum += mArray[i] - mArray[i - mRange]
-      av = sum / mRange
+      sum += mArray[i] - mArray[i - mRange];
+      av = sum / mRange;
     }
     smaArray.push(av);
   }
   return smaArray;
-}
+};
 
 // Exponential moving average: source https://stackoverflow.com/questions/40057020/calculating-exponential-moving-average-ema-using-javascript
 export const EMACalc = function(mArray: number[], mRange: number) {
-  let k = 2/(mRange + 1);
+  let k = 2 / (mRange + 1);
   // first item is just the same as the first item in the input
   let emaArray = [mArray[0]];
   // for the rest of the items, they are computed with the previous one
@@ -101,17 +101,24 @@ export const EMACalc = function(mArray: number[], mRange: number) {
     emaArray.push(mArray[i] * k + emaArray[i - 1] * (1 - k));
   }
   return emaArray;
-}
+};
 
-export const getMovingAverage = function(data: Serie[]) {
-  const resData = data.map(country => ({
-    id: country.id,
-    data: country.data.map(d => {
-      return d;
-    }),
-  }));
+export const getMovingAverage = function(data: Serie[], movingAvDays: number) {
+  const resData = data.map(country => {
+    const mavData = SMACalc(
+      country.data.map(d => Number(d.y)),
+      movingAvDays
+    );
+    return {
+      id: country.id,
+      data: country.data.map((d, idx) => {
+        d.y = mavData[idx];
+        return d;
+      }),
+    };
+  });
   return resData;
-}
+};
 
 // getLastNDaysData returns last n days of data
 export const getLastNDaysData = function(serie: Serie[], nDays: number): Serie[] {
@@ -182,7 +189,7 @@ export const getFormattedData = function(
 
   let data = getYValueForData(filteredData, showDelta);
 
-  data = getMovingAverage(data);
+  data = getMovingAverage(data, movingAvDays);
 
   // reverse to show legend in correcy order
   data = getLastNDaysData(filteredData, dateRange).reverse();
