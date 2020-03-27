@@ -1,5 +1,5 @@
 import { ResponsiveLine } from "@nivo/line";
-import { Col, Radio, Row, Select, Spin, Tooltip } from "antd";
+import { Radio, Row, Select, Spin, Tooltip } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +20,9 @@ const StyledChartTitleH2 = styled.h2`
 
 const StyledRow = styled(Row)``;
 
-const StyledControlElementCol = styled(Col)``;
+const StyledControlElementDiv = styled.div`
+  margin-left: 10px;
+`;
 
 const StyledChartCardPageDiv = styled.div`
   /* auto margin 800w - responsive to fit screen width */
@@ -117,7 +119,7 @@ function ChartCard() {
     <StyledChartCardPageDiv>
       <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
       <StyledRow justify="start" align="middle">
-        <StyledControlElementCol>
+        <StyledControlElementDiv>
           <Radio.Group
             defaultValue="delta"
             onChange={e => setShowDelta(e.target.value === "delta")}
@@ -127,16 +129,16 @@ function ChartCard() {
             <Radio.Button value="delta">Delta</Radio.Button>
             <Radio.Button value="total">Total</Radio.Button>
           </Radio.Group>
-        </StyledControlElementCol>
-        <StyledControlElementCol>
+        </StyledControlElementDiv>
+        <StyledControlElementDiv>
           <Radio.Group defaultValue={5} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
             <Tooltip placement="bottom" title="5 day moving average">
               <Radio.Button value={5}>Moving Av.</Radio.Button>
             </Tooltip>
             <Radio.Button value={1}>Raw</Radio.Button>
           </Radio.Group>
-        </StyledControlElementCol>
-        <StyledControlElementCol>
+        </StyledControlElementDiv>
+        <StyledControlElementDiv>
           <Select
             defaultValue={initialState.dateRange}
             onChange={e => setDateRange(e.valueOf())}
@@ -147,7 +149,7 @@ function ChartCard() {
             <Select.Option value={14}>14 Days</Select.Option>
             <Select.Option value={28}>28 Days</Select.Option>
           </Select>
-        </StyledControlElementCol>
+        </StyledControlElementDiv>
       </StyledRow>
       <StyledChartCardDiv>
         {data.length == 0 && (
