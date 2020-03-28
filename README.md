@@ -16,9 +16,10 @@ To debug, start locally on localhost:3000, then in vscode launch debugger using 
 
 # TODO
 
-- add moving average option for delta
-- add delta of delta
 - add About window
+  - contact info
+- add watermark
+- add iframe snippet
 
 - select individual countries on click
 - open table to see full list of data

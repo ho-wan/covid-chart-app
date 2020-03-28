@@ -1,5 +1,6 @@
 import { Datum, Serie } from "@nivo/line";
 import { DateData, DeltaData } from "../chart.types";
+import { ShowDelta } from "../ChartCard";
 
 export const formatDataForNivo = function(data: DateData[]): Serie[] {
   if (data == undefined || data.length == 0) return [];
@@ -17,11 +18,16 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   // iterate through dates, add data to dict of countries
   data.forEach((dd, dateIdx) => {
     dd.regionData.forEach((rd, regIdx) => {
-      const casesPrevDay = dateIdx > 0 ? data[dateIdx - 1].regionData[regIdx].n : 0;
+      const lastIdx = dateIdx - 1
+      const casesPrevDay = dateIdx > 0 ? data[lastIdx].regionData[regIdx].n : 0;
+      const curDelta = dateIdx > 0 ? rd.n - casesPrevDay : 0;
+      const deltaPrevDay = dateIdx > 0 ? tDict[rd.co][lastIdx].delta : 0;
+
       tDict[rd.co].push({
         x: new Date(Date.parse(dd.date)),
         cases: rd.n,
-        delta: rd.n - casesPrevDay,
+        delta: curDelta,
+        dDelta: curDelta - deltaPrevDay,
       });
     });
   });
@@ -58,12 +64,14 @@ export const sortDataByCases = function(data: DeltaData[]): DeltaData[] {
 };
 
 // add Y value for data based on state
-export const getYValueForData = function(data: Serie[], showDelta: boolean) {
+export const getYValueForData = function(data: Serie[], showDelta: ShowDelta) {
   const resData = data.map(country => ({
     id: country.id,
     data: country.data.map(d => {
-      if (showDelta) {
+      if (showDelta == "delta") {
         d.y = d.delta;
+      } else if (showDelta == "dDelta") {
+        d.y = d.dDelta;
       } else {
         d.y = d.cases;
       }
@@ -155,7 +163,7 @@ export const tickSpacing: { [key: number]: string } = {
 };
 
 export interface StateForData {
-  showDelta: boolean;
+  showDelta: ShowDelta;
   dateRange: number;
   nCountries: number;
   movingAvDays: number;
