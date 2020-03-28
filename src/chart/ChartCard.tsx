@@ -2,7 +2,7 @@ import { ResponsiveLine } from "@nivo/line";
 import { Radio, Row, Select, Spin, Tooltip } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
@@ -22,6 +22,7 @@ const StyledRow = styled(Row)``;
 
 const StyledControlElementDiv = styled.div`
   margin-left: 10px;
+  margin-bottom: 10px;
 `;
 
 const StyledChartCardPageDiv = styled.div`
@@ -39,7 +40,7 @@ const StyledChartCardDiv = styled.div`
   }
 
   @media (min-height: 550px) and (max-height: 750px) {
-    height: 450px;
+    height: 80vh;
   }
 
   @media (max-height: 350px) {
@@ -50,6 +51,7 @@ const StyledChartCardDiv = styled.div`
 
   background-color: ${COLORS.white};
   margin: 10px;
+  margin-top: 0px;
   margin-bottom: 0px;
   padding: 5px;
   padding-top: 0px;
@@ -87,30 +89,48 @@ function CustomTooltip(props: React.PropsWithChildren<any>) {
   );
 }
 
+export type ShowDelta = "delta" | "dDelta" | "total";
+interface State {
+  showDelta: ShowDelta;
+  dateRange: number;
+  movingAvDays: number;
+}
+
 function ChartCard() {
-  const initialState = {
-    showDelta: true,
+  const initialState: State = {
+    showDelta: "delta",
     dateRange: 14,
     movingAvDays: 5,
   };
   const [showDelta, setShowDelta] = useState(initialState.showDelta);
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
+  // TODO move to state if editable
+  const nCountries = 8;
 
   const toggleShowDelta = function(e: RadioChangeEvent) {
-    setShowDelta(!showDelta);
+    setShowDelta(e.target.value);
 
-    if (showDelta) {
+    if (e.target.value == "total") {
       setMovingAvDays(1);
     }
   };
 
   const toggleMovingAverage = function(e: RadioChangeEvent) {
-    const mav = movingAvDays == 1 ? 5 : 1;
-    setMovingAvDays(mav);
+    setMovingAvDays(e.target.value);
   };
-  // TODO move to state
-  const nCountries = 8;
+
+  const getLegendByShowDelta = function(showDelta: ShowDelta) {
+    let legendText: string;
+    if (showDelta == "delta") {
+      legendText = "Delta (daily increase in cases)";
+    } else if (showDelta == "dDelta") {
+      legendText = "Delta of Delta (rate of daily increase)";
+    } else {
+      legendText = "Total cases";
+    }
+    return legendText;
+  };
 
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
@@ -119,8 +139,9 @@ function ChartCard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const dateData = useSelector(chartSelectors.dataSelector);
+  const dateData = useSelector(chartSelectors.dataSelector, shallowEqual);
 
+  // this gets called on every render - TODO only do this once when data fetched, not sure how to do with hooks + redux
   const data = getFormattedData(dateData, { showDelta, dateRange, nCountries, movingAvDays });
 
   return (
@@ -129,14 +150,22 @@ function ChartCard() {
       <StyledRow justify="start" align="middle">
         <StyledControlElementDiv>
           <Radio.Group value={showDelta} onChange={toggleShowDelta} buttonStyle="solid" size="small">
-            <Radio.Button value={true}>Delta</Radio.Button>
-            <Radio.Button value={false}>Total</Radio.Button>
+            <Tooltip placement="bottom" title="Daily increase in cases">
+              <Radio.Button value={"delta"}>Delta</Radio.Button>
+            </Tooltip>
+            <Tooltip placement="bottom" title="Rate of daily increase. < 0 indicates growth of virus has peaked">
+              <Radio.Button value={"dDelta"}>dDelta</Radio.Button>
+            </Tooltip>
+            <Radio.Button value={"total"}>Total</Radio.Button>
           </Radio.Group>
         </StyledControlElementDiv>
         <StyledControlElementDiv>
           <Radio.Group value={movingAvDays} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
-            <Tooltip placement="bottom" title="5 day moving average">
-              <Radio.Button value={5}>Moving Av.</Radio.Button>
+            <Tooltip placement="bottom" title="10 day exponential moving average">
+              <Radio.Button value={10}>MA-10</Radio.Button>
+            </Tooltip>
+            <Tooltip placement="bottom" title="5 day exponential moving average">
+              <Radio.Button value={5}>MA-5</Radio.Button>
             </Tooltip>
             <Radio.Button value={1}>Raw</Radio.Button>
           </Radio.Group>
@@ -146,7 +175,7 @@ function ChartCard() {
             defaultValue={initialState.dateRange}
             onChange={e => setDateRange(e.valueOf())}
             size="small"
-            // style={{ width: 120 }}
+            style={{ width: 90 }}
           >
             <Select.Option value={7}>7 Days</Select.Option>
             <Select.Option value={14}>14 Days</Select.Option>
@@ -177,7 +206,7 @@ function ChartCard() {
               }}
               axisLeft={null}
               axisRight={{
-                legend: showDelta ? "Delta (daily increase in cases)" : "Total cases",
+                legend: getLegendByShowDelta(showDelta),
                 legendOffset: 50,
                 legendPosition: "middle",
               }}
