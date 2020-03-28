@@ -10,12 +10,20 @@ test("formats data for Nivo charts", () => {
         {
           x: new Date(Date.parse("2020-03-05")),
           cases: 800,
-          delta: 800,
+          dDelta:0,
+          delta: 0,
         },
         {
           x: new Date(Date.parse("2020-03-06")),
           cases: 900,
+          dDelta: 100,
           delta: 100,
+        },
+        {
+          x: new Date(Date.parse("2020-03-07")),
+          cases: 1050,
+          dDelta:50,
+          delta: 150,
         },
       ],
     },
@@ -25,12 +33,20 @@ test("formats data for Nivo charts", () => {
         {
           x: new Date(Date.parse("2020-03-05")),
           cases: 360,
-          delta: 360,
+          dDelta:0,
+          delta: 0,
         },
         {
           x: new Date(Date.parse("2020-03-06")),
           cases: 420,
+          dDelta:60,
           delta: 60,
+        },
+        {
+          x: new Date(Date.parse("2020-03-07")),
+          cases: 430,
+          dDelta:-50,
+          delta: 10,
         },
       ],
     },
@@ -62,6 +78,20 @@ test("formats data for Nivo charts", () => {
         {
           co: "Japan",
           n: 420,
+        },
+      ],
+    },
+    {
+      date: "2020-03-07",
+      reportNumber: 3,
+      regionData: [
+        {
+          co: "China",
+          n: 1050,
+        },
+        {
+          co: "Japan",
+          n: 430,
         },
       ],
     },
