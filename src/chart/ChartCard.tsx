@@ -1,5 +1,5 @@
 import { ResponsiveLine } from "@nivo/line";
-import { Radio, Row, Select, Spin, Tooltip } from "antd";
+import { Button, Radio, Row, Select, Spin, Tooltip } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -11,11 +11,18 @@ import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHe
 import { CHART_PROPS, COLORS } from "./utils/constants";
 
 const StyledChartTitleH2 = styled.h2`
-  margin: 0px;
+  margin: auto;
+  margin-top: 0px;
+  margin-bottom: 0px;
 
   @media (min-width: 400px) and (min-height: 600px) {
     font-size: 30px;
   }
+`;
+
+const StyledAlignRightDiv = styled.div`
+  margin-right: 10px;
+  margin-left: auto;
 `;
 
 const StyledRow = styled(Row)``;
@@ -182,6 +189,13 @@ function ChartCard() {
             <Select.Option value={28}>28 Days</Select.Option>
           </Select>
         </StyledControlElementDiv>
+        <StyledAlignRightDiv>
+          <StyledControlElementDiv>
+            <Button shape="round" size="small" value={"about"}>
+              About
+            </Button>
+          </StyledControlElementDiv>
+        </StyledAlignRightDiv>
       </StyledRow>
       <StyledChartCardDiv>
         {data.length == 0 && (
