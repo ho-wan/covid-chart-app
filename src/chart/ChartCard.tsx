@@ -22,6 +22,7 @@ const StyledRow = styled(Row)``;
 
 const StyledControlElementDiv = styled.div`
   margin-left: 10px;
+  margin-bottom: 10px;
 `;
 
 const StyledChartCardPageDiv = styled.div`
@@ -39,7 +40,7 @@ const StyledChartCardDiv = styled.div`
   }
 
   @media (min-height: 550px) and (max-height: 750px) {
-    height: 450px;
+    height: 80vh;
   }
 
   @media (max-height: 350px) {
@@ -50,6 +51,7 @@ const StyledChartCardDiv = styled.div`
 
   background-color: ${COLORS.white};
   margin: 10px;
+  margin-top: 0px;
   margin-bottom: 0px;
   padding: 5px;
   padding-top: 0px;
@@ -114,9 +116,8 @@ function ChartCard() {
     }
   };
 
-  const toggleMovingAverage = function() {
-    const mav = movingAvDays == 1 ? initialState.movingAvDays : 1;
-    setMovingAvDays(mav);
+  const toggleMovingAverage = function(e: RadioChangeEvent) {
+    setMovingAvDays(e.target.value);
   };
 
   const getLegendByShowDelta = function(showDelta: ShowDelta) {
@@ -160,8 +161,11 @@ function ChartCard() {
         </StyledControlElementDiv>
         <StyledControlElementDiv>
           <Radio.Group value={movingAvDays} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
-            <Tooltip placement="bottom" title="5 day moving average">
-              <Radio.Button value={5}>Mov. Av.</Radio.Button>
+            <Tooltip placement="bottom" title="10 day exponential moving average">
+              <Radio.Button value={10}>MA-10</Radio.Button>
+            </Tooltip>
+            <Tooltip placement="bottom" title="5 day exponential moving average">
+              <Radio.Button value={5}>MA-5</Radio.Button>
             </Tooltip>
             <Radio.Button value={1}>Raw</Radio.Button>
           </Radio.Group>

@@ -18,7 +18,7 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   // iterate through dates, add data to dict of countries
   data.forEach((dd, dateIdx) => {
     dd.regionData.forEach((rd, regIdx) => {
-      const lastIdx = dateIdx - 1
+      const lastIdx = dateIdx - 1;
       const casesPrevDay = dateIdx > 0 ? data[lastIdx].regionData[regIdx].n : 0;
       const curDelta = dateIdx > 0 ? rd.n - casesPrevDay : 0;
       const deltaPrevDay = dateIdx > 0 ? tDict[rd.co][lastIdx].delta : 0;
@@ -180,7 +180,7 @@ export const getFormattedData = function(
   const dataWithDelta = getDeltaData(dateData);
 
   // sort by delta or cases
-  const orderedData = showDelta ? sortDataByDelta(dataWithDelta) : sortDataByCases(dataWithDelta);
+  const orderedData = showDelta == "total" ? sortDataByCases(dataWithDelta) : sortDataByDelta(dataWithDelta);
 
   // get list of names for the top N number of countries - TODO use UID instead of string
   let orderedCountries = orderedData.slice(0, nCountries).map(dd => dd.country);
