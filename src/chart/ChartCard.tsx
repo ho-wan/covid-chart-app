@@ -257,12 +257,12 @@ function ChartCard() {
         )}
       </StyledChartCardDiv>
       <Modal
-        title="DeltaCov by Spandraw"
+        centered
         visible={showAboutModal}
         onCancel={() => setShowAboutModal(false)}
         onOk={() => setShowAboutModal(false)}
       >
-        <p>{"Created by Ho-Wan To"}</p>
+        <h2>{"About: DeltaCov by Spandraw"}</h2>
         <p>
           {"For business enquiries, contact me at: "}
           <a href={`mailto:${EXT_LINKS.businessEmail}`} target="_blank" rel="noopener noreferrer">
