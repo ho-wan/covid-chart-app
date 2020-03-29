@@ -66,6 +66,15 @@ const StyledChartCardDiv = styled.div`
   border: 1px solid ${COLORS.mediumGrey};
 `;
 
+const StyledWatermarkDiv = styled.div`
+  position: fixed;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 20px;
+  z-index: 1;
+`;
+
 const StyledSpinnerDiv = styled.div`
   position: relative;
   top: 50%;
@@ -142,6 +151,16 @@ function ChartCard() {
     return legendText;
   };
 
+  type CurveType = "linear" | "monotoneX" | "monotoneY" | "natural" | "stepBefore" | "step" | "stepAfter";
+  // returns different curve type based on showDelta - Not adopted
+  const getCurveFromShowDelta = function(showDelta: ShowDelta): CurveType {
+    // let curveType: CurveType = "linear";
+    // if (showDelta == "delta" || showDelta == "dDelta") {
+    //   curveType = "monotoneX";
+    // }
+    return "monotoneX";
+  };
+
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
   useEffect(() => {
@@ -160,11 +179,11 @@ function ChartCard() {
       <StyledRow justify="start" align="middle">
         <StyledControlElementDiv>
           <Radio.Group value={showDelta} onChange={toggleShowDelta} buttonStyle="solid" size="small">
-            <Tooltip placement="bottom" title="Daily increase in cases">
-              <Radio.Button value={"delta"}>Delta</Radio.Button>
-            </Tooltip>
             <Tooltip placement="bottom" title="Rate of daily increase. < 0 indicates growth of virus has peaked">
               <Radio.Button value={"dDelta"}>dDelta</Radio.Button>
+            </Tooltip>
+            <Tooltip placement="bottom" title="Daily increase in cases">
+              <Radio.Button value={"delta"}>Delta</Radio.Button>
             </Tooltip>
             <Radio.Button value={"total"}>Total</Radio.Button>
           </Radio.Group>
@@ -201,6 +220,11 @@ function ChartCard() {
         </StyledAlignRightDiv>
       </StyledRow>
       <StyledChartCardDiv>
+        <StyledWatermarkDiv>
+          <a href={`https://${EXT_LINKS.publicUrl}`} target="_blank" rel="noopener noreferrer">
+            {EXT_LINKS.publicUrl}
+          </a>
+        </StyledWatermarkDiv>
         {data.length == 0 && (
           <StyledSpinnerDiv>
             <Spin tip="Loading..." size="large" />
@@ -210,6 +234,7 @@ function ChartCard() {
           <>
             <ResponsiveLine
               data={data}
+              curve={getCurveFromShowDelta(showDelta)}
               margin={{ top: 20, right: 60, bottom: 25, left: 20 }}
               yScale={{ type: "linear", min: "auto", max: "auto" }}
               xFormat={formatDateString}
@@ -261,10 +286,11 @@ function ChartCard() {
         visible={showAboutModal}
         onCancel={() => setShowAboutModal(false)}
         onOk={() => setShowAboutModal(false)}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
-        <h2>{"About: DeltaCov by Spandraw"}</h2>
+        <h2>{"DeltaCov by Ho-Wan To"}</h2>
         <p>
-          {"For business enquiries, contact me at: "}
+          {"Contact: "}
           <a href={`mailto:${EXT_LINKS.businessEmail}`} target="_blank" rel="noopener noreferrer">
             {EXT_LINKS.businessEmail}
           </a>
@@ -273,6 +299,12 @@ function ChartCard() {
           {"Embed: "}
           <Input.TextArea defaultValue={EXT_LINKS.embed} />
         </p>
+        <div>
+          {"Data: "}
+          <a href={"https://github.com/CSSEGISandData/COVID-19"} target="_blank" rel="noopener noreferrer">
+            {"JHU CSSE"}
+          </a>
+        </div>
       </Modal>
     </StyledChartCardPageDiv>
   );

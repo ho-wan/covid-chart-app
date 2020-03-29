@@ -12,6 +12,7 @@ export const COVID_API_URL = {
 };
 
 export const EXT_LINKS = {
+  publicUrl: "covid.spandraw.com",
   businessEmail: "business@spandraw.com",
   embed: `<iframe src="https://covid.spandraw.com" height="400" width="600" frameborder="0"></iframe>`,
 }
