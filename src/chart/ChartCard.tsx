@@ -1,5 +1,5 @@
 import { ResponsiveLine } from "@nivo/line";
-import { Button, Input, Modal, Radio, Row, Select, Spin, Tooltip } from "antd";
+import { Button, Input, Modal, Pagination, Radio, Row, Select, Spin, Tooltip } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -15,8 +15,7 @@ const StyledAlignRightDiv = styled.div`
   margin-left: auto;
 `;
 
-const StyledRow = styled(Row)`
-`;
+const StyledRow = styled(Row)``;
 
 const StyledControlElementDiv = styled.div`
   margin-left: 10px;
@@ -50,7 +49,7 @@ const StyledChartCardDiv = styled.div`
 `;
 
 const StyledWatermarkDiv = styled.div`
-  position: fixed;
+  position: absolute;
   text-align: center;
   left: 50%;
   transform: translateX(-50%);
@@ -94,6 +93,7 @@ interface State {
   dateRange: number;
   movingAvDays: number;
   showAboutModal: boolean;
+  countriesPage: number;
 }
 
 function ChartCard() {
@@ -102,11 +102,13 @@ function ChartCard() {
     dateRange: 14,
     movingAvDays: 5,
     showAboutModal: false,
+    countriesPage: 1,
   };
   const [showAboutModal, setShowAboutModal] = useState(initialState.showAboutModal);
   const [showDelta, setShowDelta] = useState(initialState.showDelta);
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
+  const [countriesPage, setCountriesPage] = useState(initialState.countriesPage);
   // TODO move to state if editable
   const nCountries = 8;
 
@@ -140,6 +142,10 @@ function ChartCard() {
     return "monotoneX";
   };
 
+  const changePage = function(page: number) {
+    setCountriesPage(page);
+  };
+
   const dispatch = useDispatch();
   // call once on first load only - TODO add button to fetch API manually in case fail
   useEffect(() => {
@@ -150,7 +156,7 @@ function ChartCard() {
   const dateData = useSelector(chartSelectors.dataSelector, shallowEqual);
 
   // this gets called on every render - TODO only do this once when data fetched, not sure how to do with hooks + redux
-  const data = getFormattedData(dateData, { showDelta, dateRange, nCountries, movingAvDays });
+  const data = getFormattedData(dateData, { countriesPage, showDelta, dateRange, nCountries, movingAvDays });
 
   return (
     <>
@@ -188,6 +194,9 @@ function ChartCard() {
             <Select.Option value={14}>14 Days</Select.Option>
             <Select.Option value={28}>28 Days</Select.Option>
           </Select>
+        </StyledControlElementDiv>
+        <StyledControlElementDiv>
+          <Pagination size="small" total={24} defaultPageSize={8} current={countriesPage} onChange={changePage} />
         </StyledControlElementDiv>
         <StyledAlignRightDiv>
           <StyledControlElementDiv>
