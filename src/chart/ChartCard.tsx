@@ -1,5 +1,5 @@
 import { ResponsiveLine } from "@nivo/line";
-import { Radio, Row, Select, Spin, Tooltip } from "antd";
+import { Button, Input, Modal, Radio, Row, Select, Spin, Tooltip } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -8,14 +8,21 @@ import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
 import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHelpers";
-import { CHART_PROPS, COLORS } from "./utils/constants";
+import { CHART_PROPS, COLORS, EXT_LINKS } from "./utils/constants";
 
 const StyledChartTitleH2 = styled.h2`
-  margin: 0px;
+  margin: auto;
+  margin-top: 0px;
+  margin-bottom: 0px;
 
   @media (min-width: 400px) and (min-height: 600px) {
     font-size: 30px;
   }
+`;
+
+const StyledAlignRightDiv = styled.div`
+  margin-right: 10px;
+  margin-left: auto;
 `;
 
 const StyledRow = styled(Row)``;
@@ -94,6 +101,7 @@ interface State {
   showDelta: ShowDelta;
   dateRange: number;
   movingAvDays: number;
+  showAboutModal: boolean;
 }
 
 function ChartCard() {
@@ -101,7 +109,9 @@ function ChartCard() {
     showDelta: "delta",
     dateRange: 14,
     movingAvDays: 5,
+    showAboutModal: false,
   };
+  const [showAboutModal, setShowAboutModal] = useState(initialState.showAboutModal);
   const [showDelta, setShowDelta] = useState(initialState.showDelta);
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
@@ -182,6 +192,13 @@ function ChartCard() {
             <Select.Option value={28}>28 Days</Select.Option>
           </Select>
         </StyledControlElementDiv>
+        <StyledAlignRightDiv>
+          <StyledControlElementDiv>
+            <Button onClick={() => setShowAboutModal(true)} shape="round" size="small" value={"about"}>
+              About
+            </Button>
+          </StyledControlElementDiv>
+        </StyledAlignRightDiv>
       </StyledRow>
       <StyledChartCardDiv>
         {data.length == 0 && (
@@ -239,6 +256,24 @@ function ChartCard() {
           </>
         )}
       </StyledChartCardDiv>
+      <Modal
+        title="DeltaCov by Spandraw"
+        visible={showAboutModal}
+        onCancel={() => setShowAboutModal(false)}
+        onOk={() => setShowAboutModal(false)}
+      >
+        <p>{"Created by Ho-Wan To"}</p>
+        <p>
+          {"For business enquiries, contact me at: "}
+          <a href={`mailto:${EXT_LINKS.businessEmail}`} target="_blank" rel="noopener noreferrer">
+            {EXT_LINKS.businessEmail}
+          </a>
+        </p>
+        <p>
+          {"Embed: "}
+          <Input.TextArea defaultValue={EXT_LINKS.embed} />
+        </p>
+      </Modal>
     </StyledChartCardPageDiv>
   );
 }
