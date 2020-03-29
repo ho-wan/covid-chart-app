@@ -8,37 +8,20 @@ import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
 import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHelpers";
-import { CHART_PROPS, COLORS, EXT_LINKS } from "./utils/constants";
-
-const StyledChartTitleH2 = styled.h2`
-  margin: auto;
-  margin-top: 0px;
-  margin-bottom: 0px;
-
-  @media (min-width: 400px) and (min-height: 600px) {
-    font-size: 30px;
-  }
-`;
+import { COLORS, EXT_LINKS, PUBLIC_URL } from "./utils/constants";
 
 const StyledAlignRightDiv = styled.div`
   margin-right: 10px;
   margin-left: auto;
 `;
 
-const StyledRow = styled(Row)``;
+const StyledRow = styled(Row)`
+`;
 
 const StyledControlElementDiv = styled.div`
   margin-left: 10px;
-  margin-bottom: 10px;
-`;
-
-const StyledChartCardPageDiv = styled.div`
-  /* auto margin 800w - responsive to fit screen width */
-  @media (min-width: ${CHART_PROPS.chartWidth + 100}px) {
-    width: ${CHART_PROPS.chartWidth}px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  margin-top: 5px;
+  margin-bottom: 5px;
 `;
 
 const StyledChartCardDiv = styled.div`
@@ -58,7 +41,7 @@ const StyledChartCardDiv = styled.div`
 
   background-color: ${COLORS.white};
   margin: 10px;
-  margin-top: 0px;
+  margin-top: 5px;
   margin-bottom: 0px;
   padding: 5px;
   padding-top: 0px;
@@ -154,10 +137,6 @@ function ChartCard() {
   type CurveType = "linear" | "monotoneX" | "monotoneY" | "natural" | "stepBefore" | "step" | "stepAfter";
   // returns different curve type based on showDelta - Not adopted
   const getCurveFromShowDelta = function(showDelta: ShowDelta): CurveType {
-    // let curveType: CurveType = "linear";
-    // if (showDelta == "delta" || showDelta == "dDelta") {
-    //   curveType = "monotoneX";
-    // }
     return "monotoneX";
   };
 
@@ -174,8 +153,7 @@ function ChartCard() {
   const data = getFormattedData(dateData, { showDelta, dateRange, nCountries, movingAvDays });
 
   return (
-    <StyledChartCardPageDiv>
-      <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
+    <>
       <StyledRow justify="start" align="middle">
         <StyledControlElementDiv>
           <Radio.Group value={showDelta} onChange={toggleShowDelta} buttonStyle="solid" size="small">
@@ -221,8 +199,8 @@ function ChartCard() {
       </StyledRow>
       <StyledChartCardDiv>
         <StyledWatermarkDiv>
-          <a href={`https://${EXT_LINKS.publicUrl}`} target="_blank" rel="noopener noreferrer">
-            {EXT_LINKS.publicUrl}
+          <a href={`https://${PUBLIC_URL}`} target="_blank" rel="noopener noreferrer">
+            {PUBLIC_URL}
           </a>
         </StyledWatermarkDiv>
         {data.length == 0 && (
@@ -306,7 +284,7 @@ function ChartCard() {
           </a>
         </div>
       </Modal>
-    </StyledChartCardPageDiv>
+    </>
   );
 }
 
