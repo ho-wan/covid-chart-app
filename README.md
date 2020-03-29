@@ -16,8 +16,6 @@ To debug, start locally on localhost:3000, then in vscode launch debugger using 
 
 # TODO
 
-- add watermark
-
 - select individual countries on click
 - open table to see full list of data
   - filter table and set date
