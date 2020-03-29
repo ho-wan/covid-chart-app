@@ -261,10 +261,11 @@ function ChartCard() {
         visible={showAboutModal}
         onCancel={() => setShowAboutModal(false)}
         onOk={() => setShowAboutModal(false)}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
-        <h2>{"About: DeltaCov by Spandraw"}</h2>
+        <h2>{"DeltaCov by Ho-Wan To"}</h2>
         <p>
-          {"For business enquiries, contact me at: "}
+          {"Contact: "}
           <a href={`mailto:${EXT_LINKS.businessEmail}`} target="_blank" rel="noopener noreferrer">
             {EXT_LINKS.businessEmail}
           </a>
@@ -273,6 +274,12 @@ function ChartCard() {
           {"Embed: "}
           <Input.TextArea defaultValue={EXT_LINKS.embed} />
         </p>
+        <div>
+          {"Data: "}
+          <a href={"https://github.com/CSSEGISandData/COVID-19"} target="_blank" rel="noopener noreferrer">
+            {"JHU CSSE"}
+          </a>
+        </div>
       </Modal>
     </StyledChartCardPageDiv>
   );
