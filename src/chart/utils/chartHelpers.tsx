@@ -163,16 +163,17 @@ export const tickSpacing: { [key: number]: string } = {
 };
 
 export interface StateForData {
-  showDelta: ShowDelta;
+  countriesPage: number;
   dateRange: number;
-  nCountries: number;
   movingAvDays: number;
+  nCountries: number;
+  showDelta: ShowDelta;
 }
 
 // format data to display in chart
 export const getFormattedData = function(
   dateData: DateData[],
-  { showDelta, dateRange, nCountries, movingAvDays }: StateForData
+  { countriesPage, showDelta, dateRange, nCountries, movingAvDays }: StateForData
 ) {
   const nivoData = formatDataForNivo(dateData);
 
@@ -183,7 +184,8 @@ export const getFormattedData = function(
   const orderedData = showDelta == "total" ? sortDataByCases(dataWithDelta) : sortDataByDelta(dataWithDelta);
 
   // get list of names for the top N number of countries - TODO use UID instead of string
-  let orderedCountries = orderedData.slice(0, nCountries).map(dd => dd.country);
+  const startIdx = (countriesPage - 1) * nCountries;
+  let orderedCountries = orderedData.slice(startIdx, startIdx + nCountries).map(dd => dd.country);
 
   // add countries in order of delta - TODO can make this more efficient using a hash
   const filteredData: Serie[] = [];

@@ -1,5 +1,5 @@
 import { ResponsiveLine } from "@nivo/line";
-import { Button, Input, Modal, Radio, Row, Select, Spin, Tooltip } from "antd";
+import { Button, Input, Modal, Pagination, Radio, Row, Select, Spin, Tooltip } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -8,17 +8,7 @@ import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
 import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHelpers";
-import { CHART_PROPS, COLORS, EXT_LINKS } from "./utils/constants";
-
-const StyledChartTitleH2 = styled.h2`
-  margin: auto;
-  margin-top: 0px;
-  margin-bottom: 0px;
-
-  @media (min-width: 400px) and (min-height: 600px) {
-    font-size: 30px;
-  }
-`;
+import { COLORS, EXT_LINKS, PUBLIC_URL } from "./utils/constants";
 
 const StyledAlignRightDiv = styled.div`
   margin-right: 10px;
@@ -29,16 +19,8 @@ const StyledRow = styled(Row)``;
 
 const StyledControlElementDiv = styled.div`
   margin-left: 10px;
-  margin-bottom: 10px;
-`;
-
-const StyledChartCardPageDiv = styled.div`
-  /* auto margin 800w - responsive to fit screen width */
-  @media (min-width: ${CHART_PROPS.chartWidth + 100}px) {
-    width: ${CHART_PROPS.chartWidth}px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  margin-top: 5px;
+  margin-bottom: 5px;
 `;
 
 const StyledChartCardDiv = styled.div`
@@ -58,7 +40,7 @@ const StyledChartCardDiv = styled.div`
 
   background-color: ${COLORS.white};
   margin: 10px;
-  margin-top: 0px;
+  margin-top: 5px;
   margin-bottom: 0px;
   padding: 5px;
   padding-top: 0px;
@@ -67,7 +49,7 @@ const StyledChartCardDiv = styled.div`
 `;
 
 const StyledWatermarkDiv = styled.div`
-  position: fixed;
+  position: absolute;
   text-align: center;
   left: 50%;
   transform: translateX(-50%);
@@ -111,6 +93,7 @@ interface State {
   dateRange: number;
   movingAvDays: number;
   showAboutModal: boolean;
+  countriesPage: number;
 }
 
 function ChartCard() {
@@ -119,11 +102,13 @@ function ChartCard() {
     dateRange: 14,
     movingAvDays: 5,
     showAboutModal: false,
+    countriesPage: 1,
   };
   const [showAboutModal, setShowAboutModal] = useState(initialState.showAboutModal);
   const [showDelta, setShowDelta] = useState(initialState.showDelta);
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
+  const [countriesPage, setCountriesPage] = useState(initialState.countriesPage);
   // TODO move to state if editable
   const nCountries = 8;
 
@@ -154,11 +139,11 @@ function ChartCard() {
   type CurveType = "linear" | "monotoneX" | "monotoneY" | "natural" | "stepBefore" | "step" | "stepAfter";
   // returns different curve type based on showDelta - Not adopted
   const getCurveFromShowDelta = function(showDelta: ShowDelta): CurveType {
-    // let curveType: CurveType = "linear";
-    // if (showDelta == "delta" || showDelta == "dDelta") {
-    //   curveType = "monotoneX";
-    // }
     return "monotoneX";
+  };
+
+  const changePage = function(page: number) {
+    setCountriesPage(page);
   };
 
   const dispatch = useDispatch();
@@ -171,11 +156,10 @@ function ChartCard() {
   const dateData = useSelector(chartSelectors.dataSelector, shallowEqual);
 
   // this gets called on every render - TODO only do this once when data fetched, not sure how to do with hooks + redux
-  const data = getFormattedData(dateData, { showDelta, dateRange, nCountries, movingAvDays });
+  const data = getFormattedData(dateData, { countriesPage, showDelta, dateRange, nCountries, movingAvDays });
 
   return (
-    <StyledChartCardPageDiv>
-      <StyledChartTitleH2>{"DeltaCov Chart"}</StyledChartTitleH2>
+    <>
       <StyledRow justify="start" align="middle">
         <StyledControlElementDiv>
           <Radio.Group value={showDelta} onChange={toggleShowDelta} buttonStyle="solid" size="small">
@@ -211,6 +195,9 @@ function ChartCard() {
             <Select.Option value={28}>28 Days</Select.Option>
           </Select>
         </StyledControlElementDiv>
+        <StyledControlElementDiv>
+          <Pagination size="small" total={24} defaultPageSize={8} current={countriesPage} onChange={changePage} />
+        </StyledControlElementDiv>
         <StyledAlignRightDiv>
           <StyledControlElementDiv>
             <Button onClick={() => setShowAboutModal(true)} shape="round" size="small" value={"about"}>
@@ -221,8 +208,8 @@ function ChartCard() {
       </StyledRow>
       <StyledChartCardDiv>
         <StyledWatermarkDiv>
-          <a href={`https://${EXT_LINKS.publicUrl}`} target="_blank" rel="noopener noreferrer">
-            {EXT_LINKS.publicUrl}
+          <a href={`https://${PUBLIC_URL}`} target="_blank" rel="noopener noreferrer">
+            {PUBLIC_URL}
           </a>
         </StyledWatermarkDiv>
         {data.length == 0 && (
@@ -306,7 +293,7 @@ function ChartCard() {
           </a>
         </div>
       </Modal>
-    </StyledChartCardPageDiv>
+    </>
   );
 }
 
