@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { fetchDataAction } from "./redux/chart.actions";
 import { chartSelectors } from "./redux/chart.reducer";
 // prettier-ignore
-import { formatDateString, getFormattedData, tickSpacing } from "./utils/chartHelpers";
+import { getFormattedData, tickSpacing } from "./utils/chartHelpers";
 import { COLORS, EXT_LINKS, PUBLIC_URL } from "./utils/constants";
 
 const StyledAlignRightDiv = styled.div`
@@ -77,10 +77,12 @@ const StyledCustomTooltipDiv = styled.div`
 function CustomTooltip(props: React.PropsWithChildren<any>) {
   const { point } = props;
 
+  const date: Date = point.data.x;
+
   return (
     <StyledCustomTooltipDiv>
       <b>{point.serieId}</b>
-      <div>{point.data.xFormatted}</div>
+      <div>{date.toLocaleDateString("en-GB", { month: "short", day: "numeric" })}</div>
       <div>{`Total: ${point.data.cases}`}</div>
       <div>{`Delta: ${point.data.delta}`}</div>
     </StyledCustomTooltipDiv>
@@ -224,7 +226,7 @@ function ChartCard() {
               curve={getCurveFromShowDelta(showDelta)}
               margin={{ top: 20, right: 60, bottom: 25, left: 20 }}
               yScale={{ type: "linear", min: "auto", max: "auto" }}
-              xFormat={formatDateString}
+              // xFormat={formatDateString}
               xScale={{
                 type: "time",
                 precision: "day",
