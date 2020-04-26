@@ -14,7 +14,6 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
   data[0].regionData.forEach(regionData => {
     tDict[regionData.co] = [];
   });
-
   // iterate through dates, add data to dict of countries
   data.forEach((dd, dateIdx) => {
     dd.regionData.forEach((rd, regIdx) => {
@@ -25,8 +24,9 @@ export const formatDataForNivo = function(data: DateData[]): Serie[] {
 
       tDict[rd.co].push({
         x: new Date(Date.parse(dd.date)),
-        cases: rd.n,
-        delta: curDelta,
+        // set min to 1 for log graph
+        cases: Math.max(rd.n, 1),
+        delta: Math.max(curDelta, 1),
         dDelta: curDelta - deltaPrevDay,
       });
     });
