@@ -28,15 +28,11 @@ const StyledChartCardDiv = styled.div`
     height: 600px;
   }
 
-  @media (min-height: 550px) and (max-height: 750px) {
-    height: 80vh;
-  }
-
   @media (max-height: 350px) {
     height: 250px;
   }
 
-  height: 300px;
+  height: 70vh;
 
   background-color: ${COLORS.white};
   margin: 10px;
@@ -92,6 +88,7 @@ function CustomTooltip(props: React.PropsWithChildren<any>) {
 export type ShowDelta = "delta" | "dDelta" | "total";
 interface State {
   showDelta: ShowDelta;
+  showLog: boolean;
   dateRange: number;
   movingAvDays: number;
   showAboutModal: boolean;
@@ -101,6 +98,7 @@ interface State {
 function ChartCard() {
   const initialState: State = {
     showDelta: "delta",
+    showLog: true,
     dateRange: 14,
     movingAvDays: 5,
     showAboutModal: false,
@@ -108,13 +106,14 @@ function ChartCard() {
   };
   const [showAboutModal, setShowAboutModal] = useState(initialState.showAboutModal);
   const [showDelta, setShowDelta] = useState(initialState.showDelta);
+  const [showLog, setshowLog] = useState(initialState.showLog);
   const [dateRange, setDateRange] = useState(initialState.dateRange);
   const [movingAvDays, setMovingAvDays] = useState(initialState.movingAvDays);
   const [countriesPage, setCountriesPage] = useState(initialState.countriesPage);
   // TODO move to state if editable
   const nCountries = 8;
 
-  const toggleShowDelta = function(e: RadioChangeEvent) {
+  const toggleShowDelta = function (e: RadioChangeEvent) {
     setShowDelta(e.target.value);
 
     if (e.target.value == "total") {
@@ -122,11 +121,15 @@ function ChartCard() {
     }
   };
 
-  const toggleMovingAverage = function(e: RadioChangeEvent) {
+  const toggleShowLog = function (e: RadioChangeEvent) {
+    setshowLog(!showLog)
+  };
+
+  const toggleMovingAverage = function (e: RadioChangeEvent) {
     setMovingAvDays(e.target.value);
   };
 
-  const getLegendByShowDelta = function(showDelta: ShowDelta) {
+  const getLegendByShowDelta = function (showDelta: ShowDelta): string {
     let legendText: string;
     if (showDelta == "delta") {
       legendText = "Delta (daily increase in cases)";
@@ -138,13 +141,12 @@ function ChartCard() {
     return legendText;
   };
 
-  type CurveType = "linear" | "monotoneX" | "monotoneY" | "natural" | "stepBefore" | "step" | "stepAfter";
-  // returns different curve type based on showDelta - Not adopted
-  const getCurveFromShowDelta = function(showDelta: ShowDelta): CurveType {
-    return "monotoneX";
+  // returns true if show log selected and chart type can only be positive
+  const getShowLogByChart = function (showLog: boolean, showDelta: ShowDelta): boolean {
+    return showLog && showDelta != "dDelta";
   };
 
-  const changePage = function(page: number) {
+  const changePage = function (page: number) {
     setCountriesPage(page);
   };
 
@@ -175,6 +177,12 @@ function ChartCard() {
           </Radio.Group>
         </StyledControlElementDiv>
         <StyledControlElementDiv>
+          <Radio.Group value={showLog} onChange={toggleShowLog} buttonStyle="solid" size="small">
+            <Radio.Button value={true}>log</Radio.Button>
+            <Radio.Button value={false}>linear</Radio.Button>
+          </Radio.Group>
+        </StyledControlElementDiv>
+        <StyledControlElementDiv>
           <Radio.Group value={movingAvDays} onChange={toggleMovingAverage} buttonStyle="solid" size="small">
             <Tooltip placement="bottom" title="10 day exponential moving average">
               <Radio.Button value={10}>MA-10</Radio.Button>
@@ -188,7 +196,7 @@ function ChartCard() {
         <StyledControlElementDiv>
           <Select
             defaultValue={initialState.dateRange}
-            onChange={e => setDateRange(e.valueOf())}
+            onChange={(e) => setDateRange(e.valueOf())}
             size="small"
             style={{ width: 90 }}
           >
@@ -223,10 +231,13 @@ function ChartCard() {
           <>
             <ResponsiveLine
               data={data}
-              curve={getCurveFromShowDelta(showDelta)}
+              curve="monotoneX"
               margin={{ top: 20, right: 60, bottom: 25, left: 20 }}
-              yScale={{ type: "linear", min: "auto", max: "auto" }}
-              // xFormat={formatDateString}
+              yScale={
+                getShowLogByChart(showLog, showDelta)
+                  ? { type: "log", min: "auto", max: "auto" }
+                  : { type: "linear", min: "auto", max: "auto" }
+              }
               xScale={{
                 type: "time",
                 precision: "day",
