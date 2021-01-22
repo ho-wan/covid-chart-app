@@ -7,15 +7,17 @@ export const COLORS = {
 };
 
 export const COVID_API_URL = {
-  baseUrl: "https://covid-api.spandraw.com",
+  // baseUrl: "https://covid-api.spandraw.com",
+  baseUrl: "https://covid-api-uahbr4oaja-ue.a.run.app",
   data: "data",
 };
 
-export const PUBLIC_URL = "covid.spandraw.com";
+export const PUBLIC_URL = "https://master.d2l7iq418hrozi.amplifyapp.com/";
+// export const PUBLIC_URL = "covid.spandraw.com";
 
 export const EXT_LINKS = {
   businessEmail: "business@spandraw.com",
-  embed: `<iframe src="https://covid.spandraw.com/embed" height="400" width="600" frameborder="0"></iframe>`,
+  embed: `<iframe src="https://master.d2l7iq418hrozi.amplifyapp.com/embed" height="400" width="600" frameborder="0"></iframe>`,
 }
 
 export const CHART_PROPS = {
